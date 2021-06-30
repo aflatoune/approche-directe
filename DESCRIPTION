@@ -22,4 +22,5 @@ Imports:
     lubridate,
     dplyr,
     readxl,
-    magrittr
+    magrittr,
+    stats
