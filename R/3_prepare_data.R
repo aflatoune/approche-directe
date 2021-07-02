@@ -1,21 +1,27 @@
 #' Add dummies to the dataset
 #'
 #' @param df A df/tibble
-#' @param names A character or list of characters, names for the dummies
-#' @param conds A logical expression or list of logical expressions
+#' @param names A character or vector of characters, names for the dummies
+#' @param ... Logical expressions
 #'
-#' @return A df/tibble with additional columns with 1s if \code(conds) is TRUE
+#' @return A df/tibble with additional columns with 1s if `conds` is `TRUE`
 #' and 0s otherwise.
 #' @export
 #'
-#' @examples
-add_dummy <- function(df, names, conds) {
-    if (!(identical(length(names), length(conds)))) {
-        stop("The number of \" names\" must be equal to the number ",
-             "of \"conditions\".")
+#' @example
+#' X <- add_dummy(X, names = list("dummy1", "dummy2), cond1, cond2)
+add_dummy <- function(df, names, ...) {
+    conds <- dplyr::quos(...)
+
+    if (length(names) != length(conds)) {
+        stop("The number of \"names\" must be equal to the number of ",
+             "\"conds\".")
     }
-    df <- df %>%
-        dplyr::mutate(!!name := dplyr::case_when(cond ~ 1, TRUE ~ 0))
+
+    for (i in seq_along(names)) {
+        df <- df %>%
+            dplyr::mutate(!! names[[i]] := dplyr::if_else(!! conds[[i]], 1, 0))
+    }
     return(df)
 }
 
