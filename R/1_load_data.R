@@ -4,12 +4,12 @@
 #' not contain a date column, nor date indexes.
 #' @param date A logical, indicates whether the first column of the file is
 #' a date column. The date must be of the form "YYYY-MM-01"
-#' - if missing defaults to TRUE.
+#' - if missing defaults to `TRUE`.
 #' @param start A character indicating the date of observation of the first
-#' sample, must be of the form "YYYY-MM-01" - if missing defaults to NULL.
-#' @param frequency A character (\code{"month"} or \code{"quarter"})
-#' - if missing defaults to NULL.
-#' @sheet A character, sheet in the xlsx file - if missing defaults to NULL
+#' sample, must be of the form "YYYY-MM-01" - if missing defaults to `NULL`.
+#' @param frequency A character  `"month"` or `"quarter"` used to generate
+#' dates when `date = FALSE` - if missing defaults to `NULL`.
+#' @sheet A character, sheet in the xlsx file - if missing defaults to `NULL`
 #'
 #' @return A df/tibble with a date column and loaded data
 #'

@@ -1,19 +1,16 @@
 #' Build monthly dataset
 #'
 #' @param df A tibble/df with monthly data.
-#' @param normalize A logical, indicates whether to center and reduce the data
-#' or not - if missing defaults to FALSE.
 #'
-#' @return A tibble/df with quarterly data.
+#' @return A wider tibble/df with quarterly data. The new df contains one
+#' column for each month value (e.g. X_month1, X_month2, X_month3).
 #' @export
 #'
 #' @examples
 build_monthly_data <-
-    function(df,
-             first_diff = FALSE,
-             normalize = FALSE) {
+    function(df) {
         excluded_vars <- c("year", "quarter", "month")
-        prepared_data <- prepared_data %>%
+        prepared_data <- df %>%
             dplyr::mutate(
                 year = lubridate::year(date),
                 quarter = lubridate::quarter(date),
@@ -37,10 +34,10 @@ build_monthly_data <-
 #' Build target dataset
 #'
 #' @param df A tibble/df with two columns : date and target variable.
-#' @param date_freq A character (\code{"month"} or \code{"quarter"}), indicates
-#' the frequency of the date column - if missing defaults to \code("month").
+#' @param date_freq A character `"month"` or `"quarter"`, indicates
+#' the frequency of the date column - if missing defaults to `"month"`.
 #' @param growth_rate A logical, indicates whether to compute the growth rate
-#' or not - if missing defaults to FALSE.
+#' or not - if missing defaults to `FALSE`.
 #'
 #' @return A tibble/df with quarterly data.
 #' @export
@@ -52,7 +49,7 @@ build_target <-
              growth_rate = FALSE) {
         if (!(identical(date_freq, "month") |
               identical(date_freq, "quarter"))) {
-            stop("Frequency must be one of \"month\" or \"quarter\".")
+            stop("\"date_freq\" must be one of \"month\" or \"quarter\".")
         }
 
         prepared_data <- df %>%
@@ -79,7 +76,7 @@ build_target <-
 #'
 #' @param df A df/tibble
 #' @param exclude A vector of characters, indicates columns to ignore when
-#' computing the fd - if missing defaults to "c("year", "quarter")".
+#' computing the fd - if missing defaults to `c("year", "quarter")`.
 #'
 #' @return A df/tibble augmented with fd
 #'
