@@ -9,14 +9,12 @@
 #' sample, must be of the form "YYYY-MM-01" - if missing defaults to `NULL`.
 #' @param frequency A character  `"month"` or `"quarter"` used to generate
 #' dates when `date = FALSE` - if missing defaults to `NULL`.
-#' @sheet A character, sheet in the xlsx file - if missing defaults to `NULL`
+#' @param sheet A character, sheet in the xlsx file - if missing defaults
+#' to `NULL`
 #'
 #' @return A df/tibble with a date column and loaded data
 #'
-#' @examples
 #' @export
-#'
-#' @examples
 load_data <-
     function(path,
              date = TRUE,
