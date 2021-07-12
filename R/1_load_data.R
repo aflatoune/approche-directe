@@ -2,7 +2,7 @@
 #'
 #' @param path A path to the xlsx file containing all the data. The file must
 #' not contain a date column, nor date indexes.
-#' @param date A logical, indicates whether the first column of the file is
+#' @param date A logical indicating whether the first column of the file is
 #' a date column. The date must be of the form "YYYY-MM-01"
 #' - if missing defaults to `TRUE`.
 #' @param start A character indicating the date of observation of the first
@@ -22,15 +22,17 @@ load_data <-
              frequency = NULL,
              sheet = NULL) {
         if (is.null(start) & isFALSE(date)) {
-            stop("One of (\"date\", \"start\") must be set.")
+            stop("One of (\"date\", \"start\") must be set.", call. = FALSE)
         }
         if (!is.null(start) & is.null(frequency)) {
-            stop("You must set \"frequency\" when \"start\" is not null.")
+            stop("You must set \"frequency\" when \"start\" is not null.",
+                 , call. = FALSE)
         }
         if (!is.null(frequency)) {
             if (!(identical(frequency, "month") |
                   identical(frequency, "quarter"))) {
-                stop("Frequency must be one of \"month\" or \"quarter\".")
+                stop("Frequency must be one of \"month\" or \"quarter\".",
+                     , call. = FALSE)
             }
         }
 
@@ -42,7 +44,8 @@ load_data <-
 
         if (isTRUE(date) & is.null(start)) {
             dataset <- dataset %>%
-                dplyr::rename("date" = 1)
+                dplyr::rename("date" = 1) %>%
+                dplyr::mutate(date = as.Date(date))
         } else if (isFALSE(date) & !is.null(start)) {
             dataset <- dataset %>%
                 dplyr::mutate(date = seq.Date(

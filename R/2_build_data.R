@@ -1,9 +1,10 @@
 #' Build monthly dataset
 #'
-#' @param data A tibble/df with monthly data.
+#' @param data A tibble/df with a `"date"` column at monthly frequency.
 #'
 #' @return A wider tibble/df with quarterly data. The new df contains one
 #' column for each month value (e.g. X_month1, X_month2, X_month3).
+#'
 #' @export
 build_monthly_data <-
     function(data) {
@@ -45,7 +46,8 @@ build_target <-
              growth_rate = FALSE) {
         if (!(identical(date_freq, "month") |
               identical(date_freq, "quarter"))) {
-            stop("\"date_freq\" must be one of \"month\" or \"quarter\".")
+            stop("\"date_freq\" must be one of \"month\" or \"quarter\".",
+                 , call. = FALSE)
         }
 
         prepared_data <- data %>%
