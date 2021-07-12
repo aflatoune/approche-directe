@@ -3,5 +3,7 @@
 export(add_dummy)
 export(build_monthly_data)
 export(build_target)
+export(extend_serie)
 export(load_data)
 export(standardize_data)
+export(train_model)

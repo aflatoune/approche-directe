@@ -26,5 +26,6 @@ Imports:
     magrittr,
     stats,
     rlang,
-    caret
+    caret,
+    forecast
 Config/testthat/edition: 3
