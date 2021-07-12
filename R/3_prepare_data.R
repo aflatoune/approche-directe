@@ -15,7 +15,7 @@ add_dummy <- function(data, names, ...) {
 
     if (length(names) != length(conds)) {
         stop("The number of \"names\" must be equal to the number of ",
-             "\"conds\".")
+             "\"conds\".", call. = FALSE)
     }
 
     for (i in seq_along(names)) {
@@ -29,14 +29,49 @@ add_dummy <- function(data, names, ...) {
 #' Standardize data
 #'
 #' @param data A df/tibble
-#' @param exclude A vector of characters, indicates columns to ignore when
-#' standardizing - if missing defaults to "c("year", "quarter")".
+#' @param exclude A vector of characters indicating columns to ignore when
+#' standardizing - if missing defaults to `c("year", "quarter")`.
+#' @param reduce A logical incating whether to reduce data or only center - if
+#' missing defaults to `FALSE``.`
 #'
 #' @return A df/tibble with standardized columns
 #' @export
-standardize_data <- function(data, exclude = c("year", "quarter")) {
-    standardized_data <- data %>%
-        dplyr::mutate(dplyr::across(-excluded_vars, ~ (. - mean(., na.rm = TRUE)) /
-                                        sd(., na.rm = TRUE)))
-    return(standardized_data)
+standardize_data <- function(data, exclude = c("year", "quarter"), reduce = FALSE) {
+   if (isTRUE(reduce)) {
+       standardized_data <- data %>%
+           dplyr::mutate(dplyr::across(-excluded_vars, ~ (. - mean(., na.rm = TRUE)) /
+                                           sd(., na.rm = TRUE)))
+       return(standardized_data)
+   } else {
+       standardized_data <- data %>%
+           dplyr::mutate(
+               dplyr::across(-excluded_vars, ~ (. - mean(., na.rm = TRUE)))
+               )
+       return(standardized_data)
+   }
+}
+
+
+#' Extend series
+#'
+#' @param data A df/tibble
+#' @param cols A vector of characters indicating columns to extend
+#' @param n An integer indicating the number of samples to remove and predict
+#' TODO: generalize to n > 1
+#' @return
+#' @export
+#'
+#' @examples
+extend_series <- function(data, cols, n = 1) {
+    n_max <- dim(data)[1]
+    for (col in cols) {
+        serie <- data %>%
+            dplyr::pull(col)
+        serie <- serie[-n_max]
+        model <- forecast::auto.arima(serie, max.p = 4, max.q = 4, max.d = 1)
+        serie[n_max] <- predict(model)$pred[1]
+        data <- data %>%
+            dplyr::mutate(!!col := serie)
+    }
+    return(data)
 }
