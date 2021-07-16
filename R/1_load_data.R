@@ -1,12 +1,12 @@
 #' Load data
 #'
-#' @param path A path to the xlsx file containing all the data. The file must
-#' not contain a date column, nor date indexes.
+#' @param path A path to the xlsx file containing all the data.
 #' @param date A logical indicating whether the first column of the file is
 #' a date column. The date must be of the form "YYYY-MM-01"
 #' - if missing defaults to `TRUE`.
 #' @param start A character indicating the date of observation of the first
-#' sample, must be of the form "YYYY-MM-01" - if missing defaults to `NULL`.
+#' sample when `date` is `FALSE`, must be of the form "YYYY-MM-01"
+#' - if missing defaults to `NULL`.
 #' @param frequency A character  `"month"` or `"quarter"` used to generate
 #' dates when `date = FALSE` - if missing defaults to `NULL`.
 #' @param sheet A character, sheet in the xlsx file - if missing defaults
