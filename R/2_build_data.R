@@ -1,15 +1,30 @@
 #' Build monthly dataset
 #'
-#' @param data A tibble/df with a `"date"` column at monthly frequency.
+#' @param X A tibble/df with a `"date"` column at monthly frequency.
+#' @param start A character indicating the first date to keep, it must be of
+#' the form "YYYY-MM-01" - if missing defaults to `NULL`.
+#' @param end A character indicating the last date to keep, it must be of
+#' the form "YYYY-MM-01" - if missing defaults to `NULL`.
 #'
 #' @return A wider tibble/df with quarterly data. The new df contains one
 #' column for each month value (e.g. X_month1, X_month2, X_month3).
 #'
 #' @export
 build_monthly_data <-
-    function(data) {
+    function(X, start = NULL, end = NULL) {
+        if (!is.null(start) & !is.null(end)) {
+            X <- X %>%
+                dplyr::filter(date >= start & date <= end)
+        } else if (is.null(start) & !is.null(end)) {
+            X <- X %>%
+                dplyr::filter(date <= end)
+        } else if (!is.null(start) & is.null(end)) {
+            X <- X %>%
+                dplyr::filter(date >= start)
+        }
+
         excluded_vars <- c("year", "quarter", "month")
-        prepared_data <- data %>%
+        prepared_X <- X %>%
             dplyr::mutate(
                 year = lubridate::year(date),
                 quarter = lubridate::quarter(date),
@@ -24,15 +39,21 @@ build_monthly_data <-
             dplyr::group_by(year, quarter) %>%
             tidyr::pivot_wider(names_from = month,
                                values_from = -dplyr::all_of(excluded_vars)) %>%
-            dplyr::ungroup()
-
-        return(prepared_data)
+            dplyr::ungroup() %>%
+            dplyr::mutate(quarter = dplyr::case_when(quarter == 1 ~ 1,
+                                                     quarter == 2 ~ 4,
+                                                     quarter == 3 ~ 7,
+                                                     quarter == 4 ~ 10)) %>%
+            dplyr::mutate(date = lubridate::make_date(year, quarter)) %>%
+            dplyr::relocate(date) %>%
+            dplyr::select(-year, -quarter)
+        return(prepared_X)
     }
 
 
 #' Build target dataset
 #'
-#' @param data A tibble/df with two columns : date and target variable.
+#' @param Y A tibble/df with two columns : date and target variable.
 #' @param date_freq A character `"month"` or `"quarter"`, indicates
 #' the frequency of the date column - if missing defaults to `"month"`.
 #' @param growth_rate A logical, indicates whether to compute the growth rate
@@ -41,46 +62,46 @@ build_monthly_data <-
 #' @return A tibble/df with quarterly data.
 #' @export
 build_target <-
-    function(data,
-             date_freq = "month",
-             growth_rate = FALSE) {
+    function(y,
+             growth_rate,
+             start = NULL,
+             end = NULL,
+             date_freq = "month") {
         if (!(identical(date_freq, "month") |
               identical(date_freq, "quarter"))) {
             stop("\"date_freq\" must be one of \"month\" or \"quarter\".",
-                 , call. = FALSE)
+                 call. = FALSE)
         }
 
-        prepared_data <- data %>%
-            dplyr::rename("y" = 2)
+        prepared_y <- y %>%
+            dplyr::rename("target" = 2)
 
         if (identical(date_freq, "month")) {
-            prepared_data <- prepared_data %>%
+            prepared_y <- prepared_y %>%
                 dplyr::mutate(month = lubridate::month(date)) %>%
                 dplyr::filter(month %in% c(1, 4, 7, 10)) %>%
                 dplyr::select(-month)
         } else {
-            prepared_data <- data
+            prepared_y <- y
         }
 
         if (isTRUE(growth_rate)) {
-            prepared_data <- prepared_data %>%
-                dplyr::mutate(y = (y - dplyr::lag(y)) / dplyr::lag(y))
+            prepared_y <- prepared_y %>%
+                dplyr::mutate(
+                    target = (target - dplyr::lag(target)) / dplyr::lag(target)
+                    )
         }
-        return(prepared_data)
+
+        if (!is.null(start) & !is.null(end)) {
+            prepared_y <- prepared_y %>%
+                dplyr::filter(date >= start & date <= end)
+        } else if (is.null(start) & !is.null(end)) {
+            prepared_y <- prepared_y %>%
+                dplyr::filter(date <= end)
+        } else if (!is.null(start) & is.null(end)) {
+            prepared_y <- prepared_y %>%
+                dplyr::filter(date >= start)
+        }
+
+        return(prepared_y)
     }
-
-
-#' Add first-difference to the dataset
-#'
-#' @param data A df/tibble
-#' @param exclude A vector of characters, indicates columns to ignore when
-#' computing the fd - if missing defaults to `c("year", "quarter")`.
-#'
-#' @return A df/tibble augmented with fd
-add_firstdiff <- function(data, exclude = c("year", "quarter")) {
-    data <- data %>%
-        dplyr::mutate(
-            dplyr::across(-exclude, list(d1 =  ~ . - dplyr::lag(., n = 1L)))
-            )
-    return(data)
-}
