@@ -27,5 +27,8 @@ Imports:
     stats,
     rlang,
     caret,
-    forecast
+    forecast,
+    randomForest,
+    glmnet,
+    xgboost
 Config/testthat/edition: 3
