@@ -17,6 +17,14 @@ train_test_index <-
              horizon = 1) {
         date1 <- as.Date(date1)
         date2 <- as.Date(date2)
+
+        if (!(date1 %in% y$date)) {
+            stop("The date must be present in y.", call. = FALSE)
+        }
+        if (!(date2 %in% y$date)) {
+            stop("The date must be present in y.", call. = FALSE)
+        }
+
         initialWindow <-
             length(seq.Date(from = date1, to = date2, by = "quarter"))
         timeSlices <-
@@ -30,19 +38,3 @@ train_test_index <-
         test_index <- timeSlices[[2]]
         return(list(train_index = train_index, test_index = test_index))
     }
-
-
-#' train_model
-#'
-#' @param model
-#' @param truncate
-#' @param train_index
-#' @param test_index
-#'
-#' @return
-#' @export
-#'
-#' @examples
-train_model <- function(y, X, model, train_index, test_index) {
-    #TODO
-}

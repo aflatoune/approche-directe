@@ -21,6 +21,7 @@ load_data <-
              start = NULL,
              frequency = NULL,
              sheet = NULL) {
+
         if (is.null(start) & isFALSE(date)) {
             stop("One of (\"date\", \"start\") must be set.", call. = FALSE)
         }
@@ -29,19 +30,13 @@ load_data <-
                  , call. = FALSE)
         }
         if (!is.null(frequency)) {
-            if (!(identical(frequency, "month") |
-                  identical(frequency, "quarter"))) {
-                stop("Frequency must be one of \"month\" or \"quarter\".",
-                     , call. = FALSE)
-            }
+            frequency <- match.arg(frequency, c("month", "quarter"))
         }
-
         if (is.null(sheet)) {
             dataset <- readxl::read_xlsx(path = path, sheet = sheet)
         } else {
             dataset <- readxl::read_xlsx(path = path)
         }
-
         if (isTRUE(date) & is.null(start)) {
             dataset <- dataset %>%
                 dplyr::rename("date" = 1) %>%
