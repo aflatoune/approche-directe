@@ -27,8 +27,6 @@ build_target <-
                 dplyr::mutate(month = lubridate::month(date)) %>%
                 dplyr::filter(month %in% c(1, 4, 7, 10)) %>%
                 dplyr::select(-month)
-        } else {
-            prepared_y <- y
         }
 
         if (isTRUE(growth_rate)) {

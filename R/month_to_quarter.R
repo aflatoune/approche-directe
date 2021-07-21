@@ -1,4 +1,4 @@
-#' Build monthly dataset
+#' Build monthly dataset from quarterly dataset
 #'
 #' @param X A tibble/df with a `"date"` column at monthly frequency.
 #' @param start A character indicating the first date to keep, it must be of
@@ -10,7 +10,7 @@
 #' column for each month value (e.g. X_month1, X_month2, X_month3).
 #'
 #' @export
-build_monthly_data <-
+month_to_quarter <-
     function(X, start = NULL, end = NULL) {
         if (!is.null(start) & !is.null(end)) {
             X <- X %>%

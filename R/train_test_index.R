@@ -1,6 +1,6 @@
 #' train_test_index
 #'
-#' @param y A df/tibble containing the target variable.
+#' @param X A df/tibble containing the predictors.
 #' @param date1 A character indicating the starting date of the initial window.
 #' It must be of the form "YYYY-MM-01".
 #' @param date2 A character indicating the last date of the initial window.
@@ -11,7 +11,7 @@
 #' @return A list with 2 items: one for training indexes, one for test indexes.
 #' @export
 train_test_index <-
-    function(y,
+    function(X,
              date1,
              date2,
              horizon = 1) {
@@ -19,22 +19,20 @@ train_test_index <-
         date2 <- as.Date(date2)
 
         if (!(date1 %in% y$date)) {
-            stop("The date must be present in y.", call. = FALSE)
+            stop("The date must be present in X.", call. = FALSE)
         }
         if (!(date2 %in% y$date)) {
-            stop("The date must be present in y.", call. = FALSE)
+            stop("The date must be present in X.", call. = FALSE)
         }
 
         initialWindow <-
             length(seq.Date(from = date1, to = date2, by = "quarter"))
         timeSlices <-
             caret::createTimeSlices(
-                y = 1:dim(y)[1],
+                y = 1:dim(X)[1],
                 initialWindow = initialWindow,
                 horizon = horizon,
                 fixedWindow = FALSE
             )
-        train_index <- timeSlices[[1]]
-        test_index <- timeSlices[[2]]
-        return(list(train_index = train_index, test_index = test_index))
+        return(timeSlices)
     }

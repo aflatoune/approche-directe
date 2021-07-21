@@ -7,7 +7,7 @@
 #' @param start A character indicating the date of observation of the first
 #' sample when `date` is `FALSE`, must be of the form "YYYY-MM-01"
 #' - if missing defaults to `NULL`.
-#' @param frequency A character  `"month"` or `"quarter"` used to generate
+#' @param frequency A character `"month"` or `"quarter"` used to generate
 #' dates when `date = FALSE` - if missing defaults to `NULL`.
 #' @param sheet A character, sheet in the xlsx file - if missing defaults
 #' to `NULL`
