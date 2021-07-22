@@ -2,9 +2,9 @@
 #'
 #' @param X A tibble/df with a `"date"` column at monthly frequency.
 #' @param start A character indicating the first date to keep, it must be of
-#' the form "YYYY-MM-01" - if missing defaults to `NULL`.
+#' the form `"YYYY-MM-01"` - if missing defaults to `NULL`.
 #' @param end A character indicating the last date to keep, it must be of
-#' the form "YYYY-MM-01" - if missing defaults to `NULL`.
+#' the form `"YYYY-MM-01"` - if missing defaults to `NULL`.
 #'
 #' @return A wider tibble/df with quarterly data. The new df contains one
 #' column for each month value (e.g. X_month1, X_month2, X_month3).

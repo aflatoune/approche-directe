@@ -6,9 +6,9 @@
 #' @param date_freq A character `"month"` or `"quarter"`, indicates
 #' the frequency of the date column.
 #' @param start A character indicating the first date to keep, it must be of
-#' the form "YYYY-MM-01" - if missing defaults to `NULL`.
+#' the form `"YYYY-MM-01"` - if missing defaults to `NULL`.
 #' @param end A character indicating the last date to keep, it must be of
-#' the form "YYYY-MM-01" - if missing defaults to `NULL`.
+#' the form `"YYYY-MM-01"` - if missing defaults to `NULL`.
 #'
 #' @return A tibble/df with quarterly data.
 #' @export

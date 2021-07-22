@@ -2,9 +2,9 @@
 #'
 #' @param X A df/tibble containing the predictors.
 #' @param date1 A character indicating the starting date of the initial window.
-#' It must be of the form "YYYY-MM-01".
+#' It must be of the form `"YYYY-MM-01"`.
 #' @param date2 A character indicating the last date of the initial window.
-#' It must be of the form "YYYY-MM-01".
+#' It must be of the form `"YYYY-MM-01"`.
 #' @param horizon A integer indicating the number of consecutive values in test
 #' set sample - if missing defaults to 1.
 #'

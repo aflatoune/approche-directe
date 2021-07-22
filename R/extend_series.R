@@ -1,8 +1,8 @@
 #' Extend series
 #'
-#' @param data A df/tibble
-#' @param cols A vector of characters indicating columns to extend
-#' @param n An integer indicating the number of samples to remove and predict
+#' @param data A df/tibble.
+#' @param cols A vector of characters indicating columns to extend.
+#' @param n An integer indicating the number of samples to remove and predict.
 #' TODO: generalize to n > 1
 #' TODO: select cols with dplyr selection helpers
 #'
