@@ -18,10 +18,10 @@ train_test_index <-
         date1 <- as.Date(date1)
         date2 <- as.Date(date2)
 
-        if (!(date1 %in% y$date)) {
+        if (!(date1 %in% X$date)) {
             stop("The date must be present in X.", call. = FALSE)
         }
-        if (!(date2 %in% y$date)) {
+        if (!(date2 %in% X$date)) {
             stop("The date must be present in X.", call. = FALSE)
         }
 
