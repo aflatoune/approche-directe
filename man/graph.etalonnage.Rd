@@ -4,16 +4,39 @@
 \alias{graph.etalonnage}
 \title{Title}
 \usage{
-\method{graph}{etalonnage}(x, start, title = NULL, legend_text_size = 12, axis_text_size = 11, ...)
+\method{graph}{etalonnage}(
+  x,
+  start_graph,
+  title = NULL,
+  legend_text_size = 12,
+  axis_text_size = 11,
+  annotation_size = 5.5,
+  date_breaks = "1 year",
+  ...
+)
 }
 \arguments{
-\item{start}{A character indicating the date of observation of the first
-sample, must be of the form "YYYY-MM-01"}
+\item{x}{An object of class etalonnage.}
+
+\item{title}{A character indicating a title for the plot - if missing
+defaults to \code{NULL}.}
+
+\item{legend_text_size}{A numeric - if missing defaults to 12.}
+
+\item{axis_text_size}{A numeric - if missing defaults to 11.}
+
+\item{annotation_size}{A numeric - if missing defaults to 5.5.}
+
+\item{date_breaks}{A character indicating date breaks on the x axis of the
+plot - if missing defaults to \verb{"1 year}.}
 
 \item{...}{}
+
+\item{start}{A character indicating the date of observation of the first
+sample, must be of the form \code{"YYYY-MM-01"}}
 }
 \value{
-
+A ggplot2 plot.
 }
 \description{
 Title

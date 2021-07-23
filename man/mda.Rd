@@ -11,7 +11,7 @@ mda(actual, predicted, lag = 1L)
 
 \item{predicted}{A numeric vector indicating the predicted values.}
 
-\item{lag}{A numeric - if missing defaults to one.}
+\item{lag}{A numeric - if missing defaults to 1}
 }
 \value{
 

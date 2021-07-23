@@ -10,10 +10,10 @@ train_test_index(X, date1, date2, horizon = 1)
 \item{X}{A df/tibble containing the predictors.}
 
 \item{date1}{A character indicating the starting date of the initial window.
-It must be of the form "YYYY-MM-01".}
+It must be of the form \code{"YYYY-MM-01"}.}
 
 \item{date2}{A character indicating the last date of the initial window.
-It must be of the form "YYYY-MM-01".}
+It must be of the form \code{"YYYY-MM-01"}.}
 
 \item{horizon}{A integer indicating the number of consecutive values in test
 set sample - if missing defaults to 1.}

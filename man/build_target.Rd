@@ -20,10 +20,10 @@ or not - if missing defaults to \code{FALSE}.}
 the frequency of the date column.}
 
 \item{start}{A character indicating the first date to keep, it must be of
-the form "YYYY-MM-01" - if missing defaults to \code{NULL}.}
+the form \code{"YYYY-MM-01"} - if missing defaults to \code{NULL}.}
 
 \item{end}{A character indicating the last date to keep, it must be of
-the form "YYYY-MM-01" - if missing defaults to \code{NULL}.}
+the form \code{"YYYY-MM-01"} - if missing defaults to \code{NULL}.}
 
 \item{Y}{A tibble/df with two columns : date and target variable.}
 }

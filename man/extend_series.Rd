@@ -7,11 +7,11 @@
 extend_series(data, cols, n = 1)
 }
 \arguments{
-\item{data}{A df/tibble}
+\item{data}{A df/tibble.}
 
-\item{cols}{A vector of characters indicating columns to extend}
+\item{cols}{A vector of characters indicating columns to extend.}
 
-\item{n}{An integer indicating the number of samples to remove and predict
+\item{n}{An integer indicating the number of samples to remove and predict.
 TODO: generalize to n > 1
 TODO: select cols with dplyr selection helpers}
 }

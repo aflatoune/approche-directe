@@ -8,9 +8,9 @@ etalonnage(
   name,
   X,
   y,
-  model_type,
-  train_index,
-  test_index,
+  first_date,
+  forecast_origin,
+  model_type = c("randomForest", "xgboost", "glmnet"),
   scale = c(NULL, "center", "scale"),
   seed = 313,
   ...
@@ -19,11 +19,41 @@ etalonnage(
 \arguments{
 \item{name}{A character indicating a name for the analysis.}
 
+\item{X}{A tibble/df containing the regressors. Must contain a date column.}
+
+\item{y}{A vector containing the target variable.}
+
+\item{first_date}{A character indicating the first date to keep, must be of
+the form \code{"YYYY-MM-01"}.}
+
+\item{forecast_origin}{A character indicating the first forecast origin, it
+must be of the form \code{"YYYY-MM-01"}.}
+
+\item{model_type}{A character. For now, only \code{"randomForest"}, \code{"xgboost"}
+\code{"glmnet"} are accepted.}
+
+\item{scale}{Indicates  whether to leave unchanged, center or scale \code{X}.
+Must be one of \code{NULL}, \code{"center"} or \code{"scale"}.}
+
+\item{seed}{A numeric value interpreted as an integer.}
+
 \item{...}{}
 }
 \value{
-An object of the S3 class etalonnage.
+An object of the S3 class \code{etalonnage}.
 }
 \description{
 etalonnage
+}
+\examples{
+To train a Random Forest from 1990Q2 to 2019Q4 and predict all samples
+after 2018Q4 using a rolling-origin-update evaluation :
+model_1 <- etalonnage(name = "Random Forest en M+1",
+X = X,
+y = y$target,
+model_type = "randomForest",
+first_date = "1990-04-01",
+ast_date = "2018-10-01",
+scale = "center")
+
 }

@@ -10,10 +10,10 @@ month_to_quarter(X, start = NULL, end = NULL)
 \item{X}{A tibble/df with a \code{"date"} column at monthly frequency.}
 
 \item{start}{A character indicating the first date to keep, it must be of
-the form "YYYY-MM-01" - if missing defaults to \code{NULL}.}
+the form \code{"YYYY-MM-01"} - if missing defaults to \code{NULL}.}
 
 \item{end}{A character indicating the last date to keep, it must be of
-the form "YYYY-MM-01" - if missing defaults to \code{NULL}.}
+the form \code{"YYYY-MM-01"} - if missing defaults to \code{NULL}.}
 }
 \value{
 A wider tibble/df with quarterly data. The new df contains one
