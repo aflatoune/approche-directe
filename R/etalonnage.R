@@ -1,5 +1,12 @@
 #' etalonnage
 #'
+#` To train and evaluate our models, a rolling-origin-update (ROUE) evaluation
+#` is implemented, meaning that the forecast origin "rolls" ahead in time.
+#` At each step, ROUE increments the traning set by one observation of the test
+#' set. The date of the first sample to predict is given by `forecast_origin`
+#' + 1 quarter. Note that the training set always starts at the first sample
+#' of `X`.
+#'
 #' @param name A character indicating a name for the analysis.
 #' @param X A tibble/df containing the regressors. Must contain a date column.
 #' @param y A vector containing the target variable.
@@ -10,7 +17,7 @@
 #' @param scale Indicates  whether to leave unchanged, center or scale `X`.
 #' Must be one of `NULL`, `"center"` or `"scale"`.
 #' @param seed A numeric value interpreted as an integer.
-#' @param ...
+#' @param ... Aditionnal arguments to pass to the regressor.
 #'
 #' @return An object from S3 class `etalonnage`.
 #' @export
@@ -63,9 +70,12 @@ etalonnage <-
         X <- X %>%
             dplyr::select(-date)
 
+        pb <- txtProgressBar(
+            min = 1, max = max(seq_along(train_index)), style = 3
+            )
         set.seed(seed)
         for (i in seq_along(train_index)) {
-            print(i)
+
             y_ <- y[train_index[[i]]]
             X_ <- X[train_index[[i]], ]
 
@@ -94,16 +104,15 @@ etalonnage <-
             predicted_values <-
                 c(predicted_values,
                   predict(fit, as.matrix(X[test_index[[i]], ])))
+            setTxtProgressBar(pb, i)
         }
 
         n_test <- length(predicted_values)
-        test_rmse <-
-            sqrt(mean((predicted_values[-n_test] - y[-train_index[[1]]]) ^
-                          2))
-        test_mae <-
-            mean(abs(predicted_values[-n_test] - y[-train_index[[1]]]))
-        test_mda <-
-            mda(y[-train_index[[1]]], predicted_values[-n_test])
+        test_rmse <- sqrt(
+            mean((predicted_values[-n_test] - y[-train_index[[1]]]) ^ 2)
+            )
+        test_mae <- mean(abs(predicted_values[-n_test] - y[-train_index[[1]]]))
+        test_mda <- mda(y[-train_index[[1]]], predicted_values[-n_test])
         out <- list(
             name = name,
             first_date = first_date,
