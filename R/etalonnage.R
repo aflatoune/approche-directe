@@ -70,15 +70,13 @@ etalonnage <-
         X <- X %>%
             dplyr::select(-date)
 
-        pb <- txtProgressBar(
+        pb <- utils::txtProgressBar(
             min = 1, max = max(seq_along(train_index)), style = 3
             )
         set.seed(seed)
         for (i in seq_along(train_index)) {
-
             y_ <- y[train_index[[i]]]
             X_ <- X[train_index[[i]], ]
-
             if (identical(scale, "center")) {
                 X_ <- X_ %>%
                     standardize_data(scale = FALSE) %>%
@@ -88,7 +86,6 @@ etalonnage <-
                     standardize_data(scale = TRUE) %>%
                     as.matrix()
             }
-
             # if (identical(model_family, "glmnet")) {
             #     cv <- glmnet::cv.glmnet(X_, y_, nfolds = 5, ...)
             #     fit <- regressor(X_, y_, lambda = cv$lambda.1se, ...)
@@ -96,15 +93,13 @@ etalonnage <-
             #     fit <- regressor(X_, y_, ...)
             # }
             fit <- regressor(X_, y_, ...)
-
             if (identical(i, 1L)) {
                 fitted_values <- c(fitted_values, predict(fit, X_, ))
             }
-
             predicted_values <-
                 c(predicted_values,
                   predict(fit, as.matrix(X[test_index[[i]], ])))
-            setTxtProgressBar(pb, i)
+            utils::setTxtProgressBar(pb, i)
         }
 
         n_test <- length(predicted_values)
