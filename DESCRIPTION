@@ -31,5 +31,7 @@ Imports:
     glmnet,
     xgboost,
     tidyr,
-    scales
+    scales,
+    utils,
+    purrr
 Config/testthat/edition: 3
