@@ -4,13 +4,14 @@
 \alias{standardize_data}
 \title{Standardize data}
 \usage{
-standardize_data(data, exclude = NULL, scale = FALSE)
+standardize_data(X, exclude = NULL, scale = FALSE)
 }
 \arguments{
-\item{data}{A df/tibble}
+\item{X}{A df/tibble}
 
-\item{exclude}{A vector of characters indicating columns to ignore when
-standardizing - if missing defaults to \code{NULL}.}
+\item{exclude}{A vector of columns names indicating columns to ignore when
+computing the fd. Names can be passed directly as if they were variables in
+the environment - if missing defaults to \code{NULL}.}
 
 \item{scale}{A logical indicating whether to scale data or only center - if
 missing defaults to \verb{FALSE``.}}

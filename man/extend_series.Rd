@@ -2,12 +2,12 @@
 % Please edit documentation in R/extend_series.R
 \name{extend_series}
 \alias{extend_series}
-\title{Extend series}
+\title{Extend series with the best ARIMA(p,d,q) model}
 \usage{
-extend_series(data, cols, n = 1)
+extend_series(X, cols, n = 1)
 }
 \arguments{
-\item{data}{A df/tibble.}
+\item{X}{A df/tibble.}
 
 \item{cols}{A vector of characters indicating columns to extend.}
 
@@ -19,5 +19,6 @@ TODO: select cols with dplyr selection helpers}
 A df/tibble
 }
 \description{
-Extend series
+The function relies on forecast::auto.arima.
+See \url{https://www.rdocumentation.org/packages/forecast/versions/8.15/topics/auto.arima}
 }

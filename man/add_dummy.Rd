@@ -4,14 +4,14 @@
 \alias{add_dummy}
 \title{Add dummies to the dataset}
 \usage{
-add_dummy(data, names, ...)
+add_dummy(X, names, ...)
 }
 \arguments{
-\item{data}{A df/tibble}
+\item{X}{A df/tibble.}
 
-\item{names}{A list of characters indicating names for the dummies}
+\item{names}{A list of characters indicating names for the dummies.}
 
-\item{...}{Logical expressions}
+\item{...}{Logical expressions.}
 }
 \value{
 A df/tibble with additional columns with 1s if \code{conds} is \code{TRUE}

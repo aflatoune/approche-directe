@@ -8,9 +8,9 @@ etalonnage(
   name,
   X,
   y,
-  first_date,
   forecast_origin,
-  model_type = c("randomForest", "xgboost", "glmnet"),
+  regressor = c("randomForest", "xgboost", "glmnet"),
+  cols = NULL,
   scale = c(NULL, "center", "scale"),
   seed = 313,
   ...
@@ -23,37 +23,49 @@ etalonnage(
 
 \item{y}{A vector containing the target variable.}
 
-\item{first_date}{A character indicating the first date to keep, must be of
-the form \code{"YYYY-MM-01"}.}
-
 \item{forecast_origin}{A character indicating the first forecast origin, it
 must be of the form \code{"YYYY-MM-01"}.}
 
-\item{model_type}{A character. For now, only \code{"randomForest"}, \code{"xgboost"}
+\item{regressor}{A character. For now, only \code{"randomForest"}, \code{"xgboost"}
 \code{"glmnet"} are accepted.}
+
+\item{cols}{A vector of characters indicating columns to extend. Series
+are extended with an ARIMA(p,d,q) model - if missing defaults to \code{NULL}.}
 
 \item{scale}{Indicates  whether to leave unchanged, center or scale \code{X}.
 Must be one of \code{NULL}, \code{"center"} or \code{"scale"}.}
 
 \item{seed}{A numeric value interpreted as an integer.}
 
-\item{...}{}
+\item{...}{Aditionnal arguments to pass to the regressor.}
 }
 \value{
-An object of the S3 class \code{etalonnage}.
+An object from S3 class \code{etalonnage}.
 }
 \description{
-etalonnage
+To train and evaluate our models, a rolling-origin-update (ROUE) evaluation
+is implemented, meaning that the forecast origin "rolls" ahead in time.
+At each step, ROUE increments the traning set by one observation of the test
+set. The date of the first sample to predict is given by \code{forecast_origin}
+\itemize{
+\item 1 quarter. Note that the training set always starts at the first sample
+of \code{X}.
+To take into account the non-synchronicity of data publications, use the
+\code{cols} argument to indicate which series need to be extended. In this way
+the forecast accuracy can be assessed on the basis of a pseudo real-time
+experiment i.e. replicating the timeliness of the releases of the series
+by taking into account their publications lags. This ensures to consider
+only those values of the series that would have been available on the date
+on which the forecasts were calculated.
+}
 }
 \examples{
-To train a Random Forest from 1990Q2 to 2019Q4 and predict all samples
-after 2018Q4 using a rolling-origin-update evaluation :
+To train a Random Forest from the first date in `X` to 2019Q4 and predict
+all samples after 2018Q4 using a rolling-origin-update evaluation :
 model_1 <- etalonnage(name = "Random Forest en M+1",
 X = X,
 y = y$target,
-model_type = "randomForest",
-first_date = "1990-04-01",
-ast_date = "2018-10-01",
+regressor = "randomForest",
+forecast_origin = "2018-10-01",
 scale = "center")
-
 }
