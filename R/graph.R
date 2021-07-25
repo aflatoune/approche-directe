@@ -59,10 +59,8 @@ graph.etalonnage <-
             length.out = length(pred)
         )
         data <- data.frame(date, actual, pred)
-        try(data <- tibble::tibble(data))
         data <- data %>%
             tidyr::pivot_longer(
-                data,
                 cols = c(actual, pred),
                 names_to = "type",
                 values_to = "value"

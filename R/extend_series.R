@@ -1,4 +1,7 @@
-#' Extend series
+#' Extend series with the best ARIMA(p,d,q) model
+#'
+#' The function relies on forecast::auto.arima.
+#' See <https://www.rdocumentation.org/packages/forecast/versions/8.15/topics/auto.arima>
 #'
 #' @param X A df/tibble.
 #' @param cols A vector of characters indicating columns to extend.
@@ -14,10 +17,14 @@ extend_series <- function(X, cols, n = 1) {
         serie <- X %>%
             dplyr::pull(col)
         serie <- serie[-n_max]
-        arima_model <- forecast::auto.arima(serie, max.p = 4, max.q = 4, max.d = 1)
+        arima_model <-
+            forecast::auto.arima(serie,
+                                 max.p = 4,
+                                 max.q = 4,
+                                 max.d = 1)
         serie[n_max] <- predict(arima_model)$pred[1]
         X <- X %>%
-            dplyr::mutate(!!col := serie)
+            dplyr::mutate({{ col }} := serie)
     }
     return(X)
 }
