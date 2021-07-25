@@ -1,11 +1,18 @@
 #' etalonnage
 #'
-#` To train and evaluate our models, a rolling-origin-update (ROUE) evaluation
-#` is implemented, meaning that the forecast origin "rolls" ahead in time.
-#` At each step, ROUE increments the traning set by one observation of the test
+#' To train and evaluate our models, a rolling-origin-update (ROUE) evaluation
+#' is implemented, meaning that the forecast origin "rolls" ahead in time.
+#' At each step, ROUE increments the traning set by one observation of the test
 #' set. The date of the first sample to predict is given by `forecast_origin`
 #' + 1 quarter. Note that the training set always starts at the first sample
 #' of `X`.
+#' To take into account the non-synchronicity of data publications, use the
+#' `cols` argument to indicate which series need to be extended. In this way
+#' the forecast accuracy can be assessed on the basis of a pseudo real-time
+#' experiment i.e. replicating the timeliness of the releases of the series
+#' by taking into account their publications lags. This ensures to consider
+#' only those values of the series that would have been available on the date
+#' on which the forecasts were calculated.
 #'
 #' @param name A character indicating a name for the analysis.
 #' @param X A tibble/df containing the regressors. Must contain a date column.
@@ -14,6 +21,8 @@
 #' must be of the form `"YYYY-MM-01"`.
 #' @param regressor A character. For now, only `"randomForest"`, `"xgboost"`
 #' `"glmnet"` are accepted.
+#' @param cols A vector of characters indicating columns to extend. Series
+#' are extended with an ARIMA(p,d,q) model - if missing defaults to `NULL`.
 #' @param scale Indicates  whether to leave unchanged, center or scale `X`.
 #' Must be one of `NULL`, `"center"` or `"scale"`.
 #' @param seed A numeric value interpreted as an integer.
@@ -37,6 +46,7 @@ etalonnage <-
              y,
              forecast_origin,
              regressor = c("randomForest", "xgboost", "glmnet"),
+             cols = NULL,
              scale = c(NULL, "center", "scale"),
              seed = 313,
              ...) {
@@ -50,7 +60,7 @@ etalonnage <-
             " It is not used when fitting the model."
         )
 
-        model_family <- regressor
+        #model_family <- regressor
         forecast_origin <- as.Date(forecast_origin)
         first_date <- min(X$date)
         call <- match.call()
@@ -80,10 +90,16 @@ etalonnage <-
             if (identical(scale, "center")) {
                 X_ <- X_ %>%
                     standardize_data(scale = FALSE) %>%
+                    extend_series(cols = cols) %>%
                     as.matrix()
             } else if (identical(scale, "scale")) {
                 X_ <- X_ %>%
                     standardize_data(scale = TRUE) %>%
+                    extend_series(cols = cols) %>%
+                    as.matrix()
+            } else {
+                X_ <- X_ %>%
+                    extend_series(cols = cols) %>%
                     as.matrix()
             }
             # if (identical(model_family, "glmnet")) {
