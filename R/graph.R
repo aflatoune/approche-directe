@@ -1,11 +1,11 @@
 #' @import ggplot2
 NULL
 
-graph <- function(x) {
+graph <- function(x, ...) {
     UseMethod("graph", x)
 }
 
-graph.default <- function(x) {
+graph.default <- function(x, ...) {
     stop("Method not implemented for this class of object.")
 }
 
@@ -26,7 +26,7 @@ graph.default <- function(x) {
 #' @param annotation_x A numeric indicating the position of the annonation on
 #' x-axis - if missing defaults to 45 (days).
 #' @param annotation_y A numeric indicating the position of the annonation on
-#' y-axis - if missing defaults to -0.08 (8 %).
+#' y-axis - if missing defaults to -0.06 (- 6 %).
 #'
 #' @return A ggplot2 plot.
 #' @export
@@ -39,7 +39,7 @@ graph.etalonnage <-
              annotation_size = 5.5,
              date_breaks = "1 year",
              annotation_x = 45,
-             annotation_y = -.08) {
+             annotation_y = -.06) {
         if (!inherits(x, "etalonnage")) {
             stop("x is not of class etalonnage.")
         }
