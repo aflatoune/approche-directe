@@ -4,10 +4,41 @@
 \alias{compare}
 \title{Compare models predictions}
 \usage{
-compare(...)
+compare(
+  ...,
+  start_graph,
+  title = NULL,
+  legend_text_size = 12,
+  axis_text_size = 11,
+  annotation_size = 5.5,
+  date_breaks = "1 year",
+  annotation_x = 45,
+  annotation_y = -0.08
+)
 }
 \arguments{
 \item{...}{Objects of class etalonnage.}
+
+\item{start_graph}{A character indicating the first date to plot, must be of
+the form \code{"YYYY-MM-01"} - if missing defaults to \code{x$first_date}.}
+
+\item{title}{A character indicating a title for the plot - if missing
+defaults to \code{NULL}.}
+
+\item{legend_text_size}{A numeric - if missing defaults to 12.}
+
+\item{axis_text_size}{A numeric - if missing defaults to 11.}
+
+\item{annotation_size}{A numeric - if missing defaults to 5.5.}
+
+\item{date_breaks}{A character indicating date breaks on the x axis of the
+plot - if missing defaults to \code{"1 year"}.}
+
+\item{annotation_x}{A numeric indicating the position of the annonation on
+x-axis - if missing defaults to 45 (days).}
+
+\item{annotation_y}{A numeric indicating the position of the annonation on
+y-axis - if missing defaults to -0.08 (8 \%).}
 }
 \value{
 A ggplot2 plot.

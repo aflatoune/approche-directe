@@ -11,7 +11,7 @@ etalonnage(
   forecast_origin,
   regressor = c("randomForest", "xgboost", "glmnet"),
   cols = NULL,
-  scale = c(NULL, "center", "scale"),
+  scale = c("none", "center", "scale"),
   seed = 313,
   ...
 )
@@ -33,7 +33,7 @@ must be of the form \code{"YYYY-MM-01"}.}
 are extended with an ARIMA(p,d,q) model - if missing defaults to \code{NULL}.}
 
 \item{scale}{Indicates  whether to leave unchanged, center or scale \code{X}.
-Must be one of \code{NULL}, \code{"center"} or \code{"scale"}.}
+Must be one of \verb{"none}, \code{"center"} or \code{"scale"}.}
 
 \item{seed}{A numeric value interpreted as an integer.}
 
