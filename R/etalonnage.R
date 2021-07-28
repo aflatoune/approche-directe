@@ -1,6 +1,6 @@
 #' etalonnage
 #'
-#' To train and evaluate our models, a rolling-origin-update (ROUE) evaluation
+#' To train and evaluate the models, a rolling-origin-update (ROUE) evaluation
 #' is implemented, meaning that the forecast origin "rolls" ahead in time.
 #' At each step, ROUE increments the traning set by one observation of the test
 #' set. The date of the first sample to predict is given by `forecast_origin`
@@ -20,11 +20,11 @@
 #' @param forecast_origin A character indicating the first forecast origin, it
 #' must be of the form `"YYYY-MM-01"`.
 #' @param regressor A character. For now, only `"randomForest"`, `"xgboost"`
-#' `"glmnet"` are accepted.
+#' `"glmnet"` and `"lm"` are accepted.
 #' @param cols A vector of characters indicating columns to extend. Series
 #' are extended with an ARIMA(p,d,q) model - if missing defaults to `NULL`.
 #' @param scale Indicates  whether to leave unchanged, center or scale `X`.
-#' Must be one of `NULL`, `"center"` or `"scale"`.
+#' Must be one of `"none`, `"center"` or `"scale"`.
 #' @param seed A numeric value interpreted as an integer.
 #' @param ... Aditionnal arguments to pass to the regressor.
 #'
@@ -45,9 +45,9 @@ etalonnage <-
              X,
              y,
              forecast_origin,
-             regressor = c("randomForest", "xgboost", "glmnet"),
+             regressor = c("randomForest", "xgboost", "glmnet", "lm"),
              cols = NULL,
-             scale = c(NULL, "center", "scale"),
+             scale = c("none", "center", "scale"),
              seed = 313,
              ...) {
         if (!("date" %in% names(X)) | !("Date" %in% sapply(X, class))) {
@@ -60,7 +60,6 @@ etalonnage <-
             " It is not used when fitting the model."
         )
 
-        #model_family <- regressor
         forecast_origin <- as.Date(forecast_origin)
         first_date <- min(X$date)
         call <- match.call()
@@ -70,23 +69,23 @@ etalonnage <-
             regressor,
             "randomForest" = randomForest::randomForest,
             "glmnet" = glmnet::glmnet,
-            "xgboost" = xgboost::xgboost
+            "xgboost" = xgboost::xgboost,
+            "lm" = "lm"
         )
-        indexes <- train_test_index(
-            X, date1 = first_date, date2 = forecast_origin
-            )
+        indexes <- train_test_index(X, date1 = first_date, date2 = forecast_origin)
         train_index <- indexes$train
         test_index <- indexes$test
         X <- X %>%
             dplyr::select(-date)
 
-        pb <- utils::txtProgressBar(
-            min = 1, max = max(seq_along(train_index)), style = 3
-            )
+        pb <- utils::txtProgressBar(min = 1,
+                                    max = max(seq_along(train_index)),
+                                    style = 3)
         set.seed(seed)
         for (i in seq_along(train_index)) {
             y_ <- y[train_index[[i]]]
-            X_ <- X[train_index[[i]], ]
+            X_ <- X[train_index[[i]],]
+
             if (identical(scale, "center")) {
                 X_ <- X_ %>%
                     standardize_data(scale = FALSE) %>%
@@ -97,33 +96,44 @@ etalonnage <-
                     standardize_data(scale = TRUE) %>%
                     extend_series(cols = cols) %>%
                     as.matrix()
-            } else {
+            } else if (identical(scale, "none")) {
                 X_ <- X_ %>%
                     extend_series(cols = cols) %>%
                     as.matrix()
             }
-            # if (identical(model_family, "glmnet")) {
-            #     cv <- glmnet::cv.glmnet(X_, y_, nfolds = 5, ...)
-            #     fit <- regressor(X_, y_, lambda = cv$lambda.1se, ...)
-            # } else {
-            #     fit <- regressor(X_, y_, ...)
-            # }
-            fit <- regressor(X_, y_, ...)
-            if (identical(i, 1L)) {
-                fitted_values <- c(fitted_values, predict(fit, X_, ))
+
+            if (identical(regressor, "lm")) {
+                fit <- lm(y_ ~ ., data = as.data.frame(X_))
             }
-            predicted_values <-
-                c(predicted_values,
-                  predict(fit, as.matrix(X[test_index[[i]], ])))
+            else {
+                fit <- regressor(X_, y_, ...)
+            }
+
+            if (identical(i, 1L) & !identical(regressor, "lm")) {
+                fitted_values <- c(fitted_values, predict(fit, X_,))
+            } else if (identical(i, 1L) & identical(regressor, "lm")) {
+                fitted_values <- c(fitted_values, predict(fit, as.data.frame(X_),))
+            }
+
+            if (identical(regressor, "lm")) {
+                predicted_values <-
+                    c(predicted_values,
+                      predict(fit, X[test_index[[i]],]))
+            } else {
+                predicted_values <-
+                    c(predicted_values,
+                      predict(fit, as.matrix(X[test_index[[i]],])))
+            }
+
             utils::setTxtProgressBar(pb, i)
         }
 
         n_test <- length(predicted_values)
-        test_rmse <- sqrt(
-            mean((predicted_values[-n_test] - y[-train_index[[1]]]) ^ 2)
-            )
-        test_mae <- mean(abs(predicted_values[-n_test] - y[-train_index[[1]]]))
-        test_mda <- mda(y[-train_index[[1]]], predicted_values[-n_test])
+        test_rmse <- sqrt(mean((predicted_values[-n_test] - y[-train_index[[1]]]) ^ 2))
+        test_mae <-
+            mean(abs(predicted_values[-n_test] - y[-train_index[[1]]]))
+        test_mda <-
+            mda(y[-train_index[[1]]], predicted_values[-n_test])
         out <- list(
             name = name,
             first_date = first_date,
