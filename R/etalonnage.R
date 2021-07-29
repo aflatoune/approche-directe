@@ -1,6 +1,6 @@
 #' etalonnage
 #'
-#' To train and evaluate the models, a rolling-origin-update (ROUE) evaluation
+#' To train and evaluate the models, a rolling-origin-update evaluation (ROUE)
 #' is implemented, meaning that the forecast origin "rolls" ahead in time.
 #' At each step, ROUE increments the traning set by one observation of the test
 #' set. The date of the first sample to predict is given by `forecast_origin`
@@ -78,9 +78,10 @@ etalonnage <-
         X <- X %>%
             dplyr::select(-date)
 
-        pb <- utils::txtProgressBar(min = 1,
+        pb <- try(utils::txtProgressBar(min = 1,
                                     max = max(seq_along(train_index)),
-                                    style = 3)
+                                    style = 3),
+                  silent = TRUE)
         set.seed(seed)
         for (i in seq_along(train_index)) {
             y_ <- y[train_index[[i]]]
@@ -125,7 +126,7 @@ etalonnage <-
                       predict(fit, as.matrix(X[test_index[[i]],])))
             }
 
-            utils::setTxtProgressBar(pb, i)
+            try(utils::setTxtProgressBar(pb, i), silent = TRUE)
         }
 
         n_test <- length(predicted_values)
