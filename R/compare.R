@@ -17,8 +17,6 @@
 #'
 #' @return A ggplot2 plot.
 #' @export
-#'
-#' @examples
 compare <- function(...,
                     start_graph,
                     title = NULL,
