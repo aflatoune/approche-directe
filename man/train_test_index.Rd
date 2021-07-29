@@ -4,22 +4,22 @@
 \alias{train_test_index}
 \title{train_test_index}
 \usage{
-train_test_index(X, window = NULL, date1 = NULL, date2 = NULL, horizon = 1)
+train_test_index(X, n = NULL, date1 = NULL, date2 = NULL, horizon = 1)
 }
 \arguments{
 \item{X}{A df/tibble containing the predictors.}
 
-\item{window}{A numeric indicating the size of the initial window. Cannot be
+\item{n}{A numeric indicating the size of the initial window. Cannot be
 used with \code{date1} and \code{date2} - if missing defaults to \code{NULL}.}
 
 \item{date1}{A character indicating the starting date of the initial window.
-It must be of the form \code{"YYYY-MM-01"}. Cannot be used with \code{window}
+It must be of the form \code{"YYYY-MM-01"}. Cannot be used with \code{n}
 \itemize{
 \item if missing defaults to \code{NULL}.
 }}
 
 \item{date2}{A character indicating the last date of the initial window.
-It must be of the form \code{"YYYY-MM-01"}. Cannot be used with \code{window}
+It must be of the form \code{"YYYY-MM-01"}. Cannot be used with \code{n}
 \itemize{
 \item if missing defaults to \code{NULL}.
 }}
