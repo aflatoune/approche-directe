@@ -9,7 +9,7 @@ etalonnage(
   X,
   y,
   forecast_origin,
-  regressor = c("randomForest", "xgboost", "glmnet"),
+  regressor = c("randomForest", "xgboost", "glmnet", "lm"),
   cols = NULL,
   scale = c("none", "center", "scale"),
   seed = 313,
@@ -27,7 +27,7 @@ etalonnage(
 must be of the form \code{"YYYY-MM-01"}.}
 
 \item{regressor}{A character. For now, only \code{"randomForest"}, \code{"xgboost"}
-\code{"glmnet"} are accepted.}
+\code{"glmnet"} and \code{"lm"} are accepted.}
 
 \item{cols}{A vector of characters indicating columns to extend. Series
 are extended with an ARIMA(p,d,q) model - if missing defaults to \code{NULL}.}
@@ -43,7 +43,7 @@ Must be one of \verb{"none}, \code{"center"} or \code{"scale"}.}
 An object from S3 class \code{etalonnage}.
 }
 \description{
-To train and evaluate our models, a rolling-origin-update (ROUE) evaluation
+To train and evaluate the models, a rolling-origin-update evaluation (ROUE)
 is implemented, meaning that the forecast origin "rolls" ahead in time.
 At each step, ROUE increments the traning set by one observation of the test
 set. The date of the first sample to predict is given by \code{forecast_origin}

@@ -4,16 +4,25 @@
 \alias{train_test_index}
 \title{train_test_index}
 \usage{
-train_test_index(X, date1, date2, horizon = 1)
+train_test_index(X, window = NULL, date1 = NULL, date2 = NULL, horizon = 1)
 }
 \arguments{
 \item{X}{A df/tibble containing the predictors.}
 
+\item{window}{A numeric indicating the size of the initial window. Cannot be
+used with \code{date1} and \code{date2} - if missing defaults to \code{NULL}.}
+
 \item{date1}{A character indicating the starting date of the initial window.
-It must be of the form \code{"YYYY-MM-01"}.}
+It must be of the form \code{"YYYY-MM-01"}. Cannot be used with \code{window}
+\itemize{
+\item if missing defaults to \code{NULL}.
+}}
 
 \item{date2}{A character indicating the last date of the initial window.
-It must be of the form \code{"YYYY-MM-01"}.}
+It must be of the form \code{"YYYY-MM-01"}. Cannot be used with \code{window}
+\itemize{
+\item if missing defaults to \code{NULL}.
+}}
 
 \item{horizon}{A integer indicating the number of consecutive values in test
 set sample - if missing defaults to 1.}
@@ -22,5 +31,6 @@ set sample - if missing defaults to 1.}
 A list with 2 items: one for training indexes, one for test indexes.
 }
 \description{
-train_test_index
+Generate a train/test indexes to train and evaluate the models using
+rolling-origin-update (ROUE) evaluation
 }

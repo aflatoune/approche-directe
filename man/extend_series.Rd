@@ -12,8 +12,7 @@ extend_series(X, cols, n = 1)
 \item{cols}{A vector of characters indicating columns to extend.}
 
 \item{n}{An integer indicating the number of samples to remove and predict.
-TODO: generalize to n > 1
-TODO: select cols with dplyr selection helpers}
+TODO: generalize to n > 1}
 }
 \value{
 A df/tibble

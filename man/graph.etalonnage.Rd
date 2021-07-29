@@ -13,7 +13,7 @@
   annotation_size = 5.5,
   date_breaks = "1 year",
   annotation_x = 45,
-  annotation_y = -0.08
+  annotation_y = -0.06
 )
 }
 \arguments{
@@ -38,7 +38,7 @@ plot - if missing defaults to \code{"1 year"}.}
 x-axis - if missing defaults to 45 (days).}
 
 \item{annotation_y}{A numeric indicating the position of the annonation on
-y-axis - if missing defaults to -0.08 (8 \%).}
+y-axis - if missing defaults to -0.06 (- 6 \%).}
 }
 \value{
 A ggplot2 plot.
