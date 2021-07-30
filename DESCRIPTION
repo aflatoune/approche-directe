@@ -34,5 +34,7 @@ Imports:
     tidyr,
     scales,
     utils,
-    purrr
+    purrr,
+    ggplot2,
+    magrittr
 Config/testthat/edition: 3
