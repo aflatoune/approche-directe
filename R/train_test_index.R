@@ -1,7 +1,7 @@
 #' train_test_index
 #'
-#' Generate a train/test indexes to train and evaluate the models using
-#' rolling-origin-update (ROUE) evaluation
+#' Generate train/test indexes to train and evaluate the models using
+#' rolling-origin-update evaluation (ROUE).
 #'
 #' @param X A df/tibble containing the predictors.
 #' @param n A numeric indicating the size of the initial window. Cannot be
