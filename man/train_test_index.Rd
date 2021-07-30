@@ -31,6 +31,6 @@ set sample - if missing defaults to 1.}
 A list with 2 items: one for training indexes, one for test indexes.
 }
 \description{
-Generate a train/test indexes to train and evaluate the models using
-rolling-origin-update (ROUE) evaluation
+Generate train/test indexes to train and evaluate the models using
+rolling-origin-update evaluation (ROUE).
 }
