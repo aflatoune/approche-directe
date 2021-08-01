@@ -1,6 +1,6 @@
 #' Build target dataset
 #'
-#' @param Y A tibble/df with two columns : date and target variable.
+#' @param y A tibble/df with two columns : date and target variable.
 #' @param growth_rate A logical, indicates whether to compute the growth rate
 #' or not - if missing defaults to `FALSE`.
 #' @param date_freq A character `"month"` or `"quarter"`, indicates
@@ -13,7 +13,7 @@
 #' @return A tibble/df with quarterly data.
 #' @export
 build_target <-
-    function(Y,
+    function(y,
              growth_rate,
              date_freq = c("month", "quarter"),
              start = NULL,
