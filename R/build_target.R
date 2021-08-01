@@ -13,7 +13,7 @@
 #' @return A tibble/df with quarterly data.
 #' @export
 build_target <-
-    function(y,
+    function(Y,
              growth_rate,
              date_freq = c("month", "quarter"),
              start = NULL,

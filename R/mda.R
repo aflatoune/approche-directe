@@ -6,6 +6,6 @@
 #'
 #' @return
 #' @export
-mda <- function(actual, predicted, lag=1L) {
+mda <- function(actual, predicted, lag = 1L) {
     mean(sign(diff(actual, lag = lag)) == sign(diff(predicted, lag = lag)))
 }
