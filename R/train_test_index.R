@@ -3,6 +3,10 @@
 #' Generate train/test indexes to train and evaluate the models using
 #' rolling-origin-update evaluation (ROUE).
 #'
+#' Note: if `X` has non-consecutive dates, it is better to generate train/test
+#' indexes using `n` rather than `date1` and `date2` to avoid unexpected
+#' results.
+#'
 #' @param X A df/tibble containing the predictors.
 #' @param n A numeric indicating the size of the initial window. Cannot be
 #' used with `date1` and `date2` - if missing defaults to `NULL`.
