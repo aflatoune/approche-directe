@@ -8,9 +8,9 @@ are based on assessments of the current and near future economic conditions, whi
 
 Within the French Treasury, two approches are used to forecast short-term GDP growth:
 
-1. Statistical models of the relationship between GDP growth and an panel of variables (survey variables, consumption data, ...) released at a higher frequency than the GDP growth rate. These series are released with various delays so that the forecasts are conditioned on the sample of series that are known at the time the estimation is performed.
+1. Statistical models of the relationship between GDP growth and an panel of variables (survey variables, consumption data, ...) released at a higher frequency than the GDP growth rate. These series are released with various delays so that the forecasts are conditioned on the sample of series that are known at the time the forecast is performed.
 2. Sectoral models combining statistical models and accounting balances from national accounting.
 
-This package provides functions to implement the first approach to GDP forecasting within the French Treasury.
+This package provides functions to implement the first approach to GDP forecasting.
 
 # Usage
