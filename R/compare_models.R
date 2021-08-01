@@ -17,7 +17,7 @@
 #'
 #' @return A ggplot2 plot.
 #' @export
-compare <- function(...,
+compare_models <- function(...,
                     start_graph,
                     title = NULL,
                     legend_text_size = 12,
