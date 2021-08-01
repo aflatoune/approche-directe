@@ -7,9 +7,6 @@
 #' @return A df/tibble with additional columns with 1s if `conds` is `TRUE`
 #' and 0s otherwise.
 #' @export
-#'
-#' @examples
-#' X <- add_dummy(X, names = list("dummy1", "dummy2"), cond1, cond2)
 add_dummy <- function(X, names, ...) {
     conds <- rlang::quos(...)
 
