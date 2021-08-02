@@ -43,10 +43,10 @@ train_test_index <-
                 )
         } else if (!is.null(date1) & !is.null(date2)) {
             if (!(date1 %in% X$date)) {
-                stop("The date must be present in X.", call. = FALSE)
+                stop("date1 must be present in X.", call. = FALSE)
             }
             if (!(date2 %in% X$date)) {
-                stop("The date must be present in X.", call. = FALSE)
+                stop("date2 must be present in X.", call. = FALSE)
             }
             initialWindow <-
                 length(seq.Date(from = date1, to = date2, by = "quarter"))
