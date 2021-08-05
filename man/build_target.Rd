@@ -13,6 +13,8 @@ build_target(
 )
 }
 \arguments{
+\item{y}{A tibble/df with two columns : date and target variable.}
+
 \item{growth_rate}{A logical, indicates whether to compute the growth rate
 or not - if missing defaults to \code{FALSE}.}
 
@@ -24,8 +26,6 @@ the form \code{"YYYY-MM-01"} - if missing defaults to \code{NULL}.}
 
 \item{end}{A character indicating the last date to keep, it must be of
 the form \code{"YYYY-MM-01"} - if missing defaults to \code{NULL}.}
-
-\item{Y}{A tibble/df with two columns : date and target variable.}
 }
 \value{
 A tibble/df with quarterly data.

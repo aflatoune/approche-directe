@@ -20,6 +20,3 @@ and 0s otherwise.
 \description{
 Add dummies to the dataset
 }
-\examples{
-X <- add_dummy(X, names = list("dummy1", "dummy2"), cond1, cond2)
-}

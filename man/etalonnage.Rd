@@ -44,7 +44,7 @@ An object from S3 class \code{etalonnage}.
 }
 \description{
 To train and evaluate the models, a rolling-origin-update evaluation (ROUE)
-is implemented, meaning that the forecast origin "rolls" ahead in time.
+is implemented, meaning that the forecast origin rolls ahead in time.
 At each step, ROUE increments the traning set by one observation of the test
 set. The date of the first sample to predict is given by \code{forecast_origin}
 \itemize{
@@ -58,14 +58,4 @@ by taking into account their publications lags. This ensures to consider
 only those values of the series that would have been available on the date
 on which the forecasts were calculated.
 }
-}
-\examples{
-To train a Random Forest from the first date in `X` to 2019Q4 and predict
-all samples after 2018Q4 using a rolling-origin-update evaluation :
-model_1 <- etalonnage(name = "Random Forest en M+1",
-X = X,
-y = y$target,
-regressor = "randomForest",
-forecast_origin = "2018-10-01",
-scale = "center")
 }

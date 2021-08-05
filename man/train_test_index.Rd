@@ -34,3 +34,8 @@ A list with 2 items: one for training indexes, one for test indexes.
 Generate train/test indexes to train and evaluate the models using
 rolling-origin-update evaluation (ROUE).
 }
+\details{
+Note: if \code{X} has non-consecutive dates, it is better to generate train/test
+indexes using \code{n} rather than \code{date1} and \code{date2} to avoid unexpected
+results.
+}
