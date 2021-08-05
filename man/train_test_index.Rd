@@ -4,21 +4,28 @@
 \alias{train_test_index}
 \title{train_test_index}
 \usage{
-train_test_index(X, n = NULL, date1 = NULL, date2 = NULL, horizon = 1)
+train_test_index(
+  X,
+  n = NULL,
+  date_start = NULL,
+  date_end = NULL,
+  horizon = 1,
+  frequency = c("month", "quarter")
+)
 }
 \arguments{
 \item{X}{A df/tibble containing the predictors.}
 
 \item{n}{A numeric indicating the size of the initial window. Cannot be
-used with \code{date1} and \code{date2} - if missing defaults to \code{NULL}.}
+used with \code{date_start} and \code{date_end} - if missing defaults to \code{NULL}.}
 
-\item{date1}{A character indicating the starting date of the initial window.
+\item{date_start}{A character indicating the starting date of the initial window.
 It must be of the form \code{"YYYY-MM-01"}. Cannot be used with \code{n}
 \itemize{
 \item if missing defaults to \code{NULL}.
 }}
 
-\item{date2}{A character indicating the last date of the initial window.
+\item{date_end}{A character indicating the last date of the initial window.
 It must be of the form \code{"YYYY-MM-01"}. Cannot be used with \code{n}
 \itemize{
 \item if missing defaults to \code{NULL}.
@@ -26,6 +33,9 @@ It must be of the form \code{"YYYY-MM-01"}. Cannot be used with \code{n}
 
 \item{horizon}{A integer indicating the number of consecutive values in test
 set sample - if missing defaults to 1.}
+
+\item{frequency}{A character indicating the date frequency. Must be one of
+\verb{"month} or \code{"quarter"}.}
 }
 \value{
 A list with 2 items: one for training indexes, one for test indexes.
@@ -36,6 +46,6 @@ rolling-origin-update evaluation (ROUE).
 }
 \details{
 Note: if \code{X} has non-consecutive dates, it is better to generate train/test
-indexes using \code{n} rather than \code{date1} and \code{date2} to avoid unexpected
+indexes using \code{n} rather than \code{date_start} and \code{date_end} to avoid unexpected
 results.
 }

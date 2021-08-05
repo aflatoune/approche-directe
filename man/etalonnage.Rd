@@ -12,6 +12,7 @@ etalonnage(
   regressor = c("randomForest", "xgboost", "glmnet", "lm"),
   cols = NULL,
   scale = c("none", "center", "scale"),
+  frequency = "quarter",
   seed = 313,
   ...
 )
@@ -34,6 +35,9 @@ are extended with an ARIMA(p,d,q) model - if missing defaults to \code{NULL}.}
 
 \item{scale}{Indicates  whether to leave unchanged, center or scale \code{X}.
 Must be one of \verb{"none}, \code{"center"} or \code{"scale"}.}
+
+\item{frequency}{A character indicating the date frequency - if missing
+defaults to \code{"quarter"}.}
 
 \item{seed}{A numeric value interpreted as an integer.}
 
