@@ -8,9 +8,13 @@ on:
 
 jobs:
   R-CMD-check:
-    runs-on: macOS-latest
+    runs-on: ${{ matrix.config.os }}
+    name: check-on-${{ matrix.config.os }}
     strategy:
       matrix:
+        config:
+          - {os: windows-latest}
+          - {os: macOS-latest}
         r-version: [4.1]
 
     steps:
