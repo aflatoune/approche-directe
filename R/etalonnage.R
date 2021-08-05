@@ -25,6 +25,8 @@
 #' are extended with an ARIMA(p,d,q) model - if missing defaults to `NULL`.
 #' @param scale Indicates  whether to leave unchanged, center or scale `X`.
 #' Must be one of `"none`, `"center"` or `"scale"`.
+#' @param frequency A character indicating the date frequency - if missing
+#' defaults to `"quarter"`.
 #' @param seed A numeric value interpreted as an integer.
 #' @param ... Aditionnal arguments to pass to the regressor.
 #'
@@ -38,6 +40,7 @@ etalonnage <-
              regressor = c("randomForest", "xgboost", "glmnet", "lm"),
              cols = NULL,
              scale = c("none", "center", "scale"),
+             frequency = "quarter",
              seed = 313,
              ...) {
         if (!("date" %in% names(X)) | !("Date" %in% sapply(X, class))) {
@@ -62,7 +65,10 @@ etalonnage <-
             "xgboost" = xgboost::xgboost,
             "lm" = "lm"
         )
-        indexes <- train_test_index(X, date1 = first_date, date2 = forecast_origin)
+        indexes <- train_test_index(X,
+                                    date_start = first_date,
+                                    date_end = forecast_origin,
+                                    frequency = frequency)
         train_index <- indexes$train
         test_index <- indexes$test
         X <- X %>%
