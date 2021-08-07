@@ -1,6 +1,9 @@
 ---
 title: "etalonnage"
-output: rmarkdown::html_vignette
+description: >
+  This document shows how to use the `etalonnage` package to facilitate GDP
+  forecasting/nowcasting using real French data.
+output: rmarkdown::github_document
 vignette: >
   %\VignetteIndexEntry{etalonnage}
   %\VignetteEngine{knitr::rmarkdown}
@@ -14,6 +17,201 @@ knitr::opts_chunk$set(
 )
 ```
 
+
+```{r, include=FALSE}
+devtools::load_all()
+```
+
+
 ```{r setup}
 library(etalonnage)
 ```
+
+## Data
+
+First, load a `dataframe` containing regressors (`fr_x`) and another one containing the target (`fr_y`).
+To emulate a real forecast situation `fr_x` covers a wider period (one more quarter) than `fr_y`.
+
+```{r}
+data("fr_x", "fr_y")
+```
+
+`fr_x` is composed of a series of:
+
+1. monthly survey indicators in three sectors (services, industry, construction, retail trade)
+2. "hard" series (household consumption, industrial production index - IPI).
+
+```{r, echo=FALSE}
+head(fr_x, n = 3)
+```
+
+`fr_y` is composed of real GDP values at a quarterly frequency.
+
+```{r, echo=FALSE}
+head(fr_y, n =3)
+```
+
+## Processing
+
+During a forecasting exercise, the preprocessing to be done is often the same (set the predictors to the same frequency as the target, add dummies, ...). The package `etalonnage` provides functions to facilitate the realization of these treatments.
+
+Convert the target to growth rate using `build_target`:
+
+```{r}
+fr_y <- build_target(fr_y,
+                     growth_rate = TRUE,
+                     date_freq = "quarter")
+head(fr_y, n = 3)
+```
+
+Pivot regressors to have one column for each month in a quarter (and thus match the frequency of the target) using `month_to_quarter`, and add all regressors first-diff to `fr_x` using `add_diff`:
+
+```{r}
+fr_x <- fr_x %>%
+    month_to_quarter() %>%
+    add_diff(exclude = "date")
+```
+
+To deal with `NA` or structural breaks, it is common to add dummies to the regressors. This can be done using `add_dummy`: pass a `list` of names for the dummies and add the
+corresponding conditions one-by-one. Here, the columns `retailInsee` and `batBdf` have `NA` respectively until 1999 and 2009Q4:
+
+```{r}
+fr_x <- fr_x %>%
+    add_dummy(
+        names = list("dummy_retailInsee", "dummy_batBdf"),
+        (date < "1999-01-01"),
+        (date < "2009-04-01")
+    )
+```
+
+It is also possible to convert columns values to growth rate using `to_growth_rate` (be careful to exclude date, dummies etc. from the processing):
+
+```{r}
+fr_x <- fr_x %>%
+  to_growth_rate(
+    exclude = c("date", dplyr::starts_with("dummy"), dplyr::contains("fd_")),
+    inplace = TRUE
+    )
+```
+
+Make sure that `fr_x` and `fr_y` starts at the same date and replace `NA` with some value (here 0):
+
+```{r}
+fr_y <- fr_y[-1,]
+fr_x <- fr_x[-c(1,2),]
+fr_x[is.na(fr_x)] <- 0
+```
+
+
+## Forecasting
+
+During a forecast exercise, it is common that the forecast is performed using information provided by series released at a higher frequency than the target. These series
+are released with various delays so that the forecast is conditioned on the sample of series that are known at the time the estimation is performed. In order to take into account the non-synchronicity of data publications (and thus to properly assess the performances of a amodel), the forecast accuracy is assessed on the basis of a pseudo real-time experiment. This kind of evaluation aims at replicating the timeliness of the releases of the series by taking into account their publications lags. In this framework, the series are truncated in order to consider only those values of the series that would have been available on the date on which the forecasts were calculated. 
+
+Suppose for example that one wants to forecast the French GDP growth rate in 2000Q2.  Depending on the horizon, the forecast is computed conditional on the information released until April 2000, May 2000 or June 2000. Consider June 2000. At this horizon, 3 months (April 2000, May 2000 and June 2000) of Insee survey variables are available since these variables are released with no delay (i.e. during the month to which they relate) but only 2 months (April 2000 and May 2000) of Banque de France survey variables are available since these variables are released with a delay of 1 month. As a result the final dataset contains some values that shouldn't be observed. To deal with these, `etalonnage` package contains a function `extend_series` that drop those values and extend one (or more) series based on the ARIMA(p,d,q) model that best fits the series.
+
+### Validation scheme
+
+When data are not i.i.d., the validation scheme has to take into consideration the time dependent structure of the data to avoid the creation of non-independent training and test sets. To assess a model
+performances, `etalonnage` package implements "rolling-origin-update evaluation" (ROUE), meaning that the forecast origin rolls ahead in time. At each step, ROUE increments the traning set by one observation of the test set. Here, ROUE is implemented in such a way that the size of the training set increases at each iteration (expanding window) rather than remaining constant (fixed window). In doing so, all the available information is used but equal importance is given to all observations of the training set, regardless of their "distance" to the forecast origin. At the end of the validation, a set of forecasts is available, making it possible to compare models.
+
+### Example
+
+Let's illustrate the whole process with a example. Suppose we want to forecast French growth at 2018Q4 (which is released by the INSEE 30 days after the end of the quarter) standing at December 2018. Suppose that the first date to forecast is 2015Q1 and that two type of models must be evaluated: one based on a random forest, another one based on ridge regression.
+
+At December 2018, all values in `fr_x` are observed except household consumption in December and IPI in November and December. Thus, the columns containing these values must be truncated and extended with an ARIMA model each time a forecast is performed:
+
+```{r}
+conso3_cols <- names(fr_x)[stringr::str_detect(names(fr_x), "conso_3")]
+ipi2_3_cols <- names(fr_x)[stringr::str_detect(names(fr_x), "ipi_[2-3]")]
+extend_cols <- c(conso3_cols, ipi2_3_cols)
+```
+
+Fit the models:
+
+```{r, message=FALSE, results="hide"}
+rf <- etalonnage(
+    name = "Random Forest",
+    X = fr_x,
+    y = fr_y$target,
+    regressor = "randomForest",
+    cols = extend_cols,
+    forecast_origin = "2014-10-01",
+    scale = "none",
+    mtry = 55,
+    ntree = 500,
+    nodesize = 3,
+    importance = TRUE
+)
+
+xgb <- etalonnage(
+    name = "XGBoost",
+    X = fr_x,
+    y = fr_y$target,
+    regressor = "xgboost",
+    cols = extend_cols,
+    forecast_origin = "2014-10-01",
+    scale = "none",
+    nrounds = 1500,
+    eta = 0.05,
+    max_depth = 6,
+    verbose = FALSE
+)
+```
+
+For each of the two models, this is what is done by `etalonnage`:
+
+1. Drop column `date` from the regressors,
+2. Keep all data until `forecast_origin`,
+3. If `scale != "none"`, process the data,
+4. Extend series in `cols`,
+5. Fit a model of type `regressor` on the data,
+6. Predict a value for the growth rate at `forecast_origin` + 1 quarter,
+7. Repeat steps from step 2 to step 6 until the last raw in `fr_x` is reached.
+
+Other arguments like `mtry` or `eta` come directly from the packages used to fit the models, i.e.:
+ 
+1. [randomForest](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf) for `regressor = "randomForest"`,
+2. [xgboost](https://cran.r-project.org/web/packages/xgboost/xgboost.pdf) for `regressor = "xgboost"`,
+3. [glmnet](https://cran.r-project.org/web/packages/glmnet/glmnet.pdf) for `regressor = "glmnet"`.
+
+Plot a model predictions using the method `graph`:
+
+```{r fig.height = 4, fig.width = 7, fig.align = "center", message=FALSE}
+graph(xgb, annotation_y = -0.01, annotation_x = 200)
+```
+
+Directly access to the predicted values using `rf$predicted_values` or valuate the models using their attributes:
+
+```{r}
+rf$test_rmse
+rf$test_mae
+rf$test_mda
+```
+
+```{r}
+xgb$test_rmse
+xgb$test_mae
+xgb$test_mda
+```
+
+Graph the two models using `graph_models`:
+
+```{r fig.height = 4, fig.width = 7, fig.align = "center"}
+graph_models(rf, xgb, start_graph = "2000-01-01")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
