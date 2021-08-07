@@ -3,7 +3,7 @@ title: "etalonnage"
 description: >
   This document shows how to use the `etalonnage` package to facilitate GDP
   forecasting/nowcasting using real French data.
-output: rmarkdown::github_document
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{etalonnage}
   %\VignetteEngine{knitr::rmarkdown}
@@ -16,12 +16,6 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-
-
-```{r, include=FALSE}
-devtools::load_all()
-```
-
 
 ```{r setup}
 library(etalonnage)
