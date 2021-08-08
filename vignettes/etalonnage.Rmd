@@ -193,18 +193,3 @@ Graph the two models using `graph_models`:
 ```{r fig.height = 4, fig.width = 7, fig.align = "center"}
 graph_models(rf, xgb, start_graph = "2000-01-01")
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
