@@ -7,6 +7,7 @@
 #' @param n A numeric indicating the order of the differencied variables.
 #'
 #' @return A df/tibble augmented with differencied variables.
+#' @export
 add_diff <- function(X, exclude = NULL, n = 1L) {
     n <- as.integer(n)
     X <- X %>%
