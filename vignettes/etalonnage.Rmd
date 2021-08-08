@@ -15,10 +15,6 @@ knitr::opts_chunk$set(
 ```
 
 This document shows how to use the `etalonnage` package to facilitate GDP forecasting/nowcasting using real French data.
-  
-```{r, include=FALSE}
-devtools::load_all()
-```
 
 ```{r setup}
 library(etalonnage)
