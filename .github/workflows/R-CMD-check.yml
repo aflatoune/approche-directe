@@ -16,7 +16,6 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: windows-latest, r: '3.6'}
           - {os: macOS-latest, r: 'release'}
-        r-version: [4.1]
 
     steps:
       - name: Checkout
