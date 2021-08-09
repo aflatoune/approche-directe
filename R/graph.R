@@ -1,10 +1,12 @@
 #' @import ggplot2
 NULL
 
+#' @export
 graph <- function(x, ...) {
     UseMethod("graph", x)
 }
 
+#' @export
 graph.default <- function(x, ...) {
     stop("Method not implemented for this class of object.")
 }
