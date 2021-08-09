@@ -15,7 +15,7 @@ This package provides functions to implement the first approach to GDP forecasti
 
 # Installation
 
-The package has been tested with R >= 4.0.5.
+The package has been tested with R 3.6 and >= 4.0.5.
 
 ```r
 # install.packages("devtools")
