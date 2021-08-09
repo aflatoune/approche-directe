@@ -3,7 +3,7 @@
 
 # Description
 
-Having an accurate knowledge of the current economic situation and growth prospects is essential for business analysts and policy makers. Indeed, economic policy decisions
+Having an accurate knowledge of the current economic situation and growth prospects is essential for business analysts and policy makers. Economic policy decisions
 are based on assessments of the current and near future economic conditions, which are available with a significant delay. Nowcasting GDP growth is necessary to initiate longer-term forecasts, and it represents an essential piece of information for assessing real-time changes in the economic.
 
 Within the French Treasury, two approches are used to forecast short-term GDP growth:
@@ -13,4 +13,19 @@ Within the French Treasury, two approches are used to forecast short-term GDP gr
 
 This package provides functions to implement the first approach to GDP forecasting.
 
+# Installation
+
+The package has been tested with R >= 4.0.5.
+
+```r
+# install.packages("devtools")
+devtools::install_github("aflatoune/etalonnage")
+```
+
 # Usage
+
+For a detailed presentation of the package, see the associated vignette.
+
+```r
+utils::vignette("etalonnage")
+```
