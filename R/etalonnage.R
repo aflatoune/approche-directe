@@ -4,7 +4,7 @@
 #' is implemented, meaning that the forecast origin rolls ahead in time.
 #' At each step, ROUE increments the traning set by one observation of the test
 #' set. The date of the first sample to predict is given by `forecast_origin`
-#' + 1 quarter. Note that the training set always starts at the first sample
+#' plus 1 quarter. Note that the training set always starts at the first sample
 #' of `X`.
 #' To take into account the non-synchronicity of data publications, use the
 #' `cols` argument to indicate which series need to be extended. In this way
