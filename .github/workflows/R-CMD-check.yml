@@ -9,16 +9,17 @@ on:
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
-    name: check-on-${{ matrix.config.os }}
+    name: check-on-${{ matrix.config.os }} (${{ matrix.config.r }})
     strategy:
       matrix:
         config:
-          - {os: windows-latest}
-          - {os: macOS-latest}
+          - {os: windows-latest, r: 'release'}
+          - {os: windows-latest, r: '3.6'}
+          - {os: macOS-latest, r: 'release'}
         r-version: [4.1]
 
     steps:
-      - name: Checkout 
+      - name: Checkout
         uses: actions/checkout@v2
       - name: Set up R ${{ matrix.r-version }}
         uses: r-lib/actions/setup-r@v1
