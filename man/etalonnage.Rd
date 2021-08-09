@@ -51,8 +51,7 @@ To train and evaluate the models, a rolling-origin-update evaluation (ROUE)
 is implemented, meaning that the forecast origin rolls ahead in time.
 At each step, ROUE increments the traning set by one observation of the test
 set. The date of the first sample to predict is given by \code{forecast_origin}
-\itemize{
-\item 1 quarter. Note that the training set always starts at the first sample
+plus 1 quarter. Note that the training set always starts at the first sample
 of \code{X}.
 To take into account the non-synchronicity of data publications, use the
 \code{cols} argument to indicate which series need to be extended. In this way
@@ -61,5 +60,4 @@ experiment i.e. replicating the timeliness of the releases of the series
 by taking into account their publications lags. This ensures to consider
 only those values of the series that would have been available on the date
 on which the forecasts were calculated.
-}
 }
