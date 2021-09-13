@@ -29,7 +29,7 @@ To emulate a real forecast situation `fr_x` covers a wider period (one more quar
 data("fr_x", "fr_y")
 ```
 
-`fr_x` is composed of a series of:
+`fr_x` is composed of:
 
 1. monthly survey indicators in three sectors (services, industry, construction, retail trade)
 2. "hard" series (household consumption, industrial production index - IPI).
