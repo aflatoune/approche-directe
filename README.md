@@ -4,7 +4,7 @@
 # Description
 
 Having an accurate knowledge of the current economic situation and growth prospects is essential for business analysts and policy makers. Economic policy decisions
-are based on assessments of the current and near future economic conditions, which are available with a significant delay. Nowcasting GDP growth is necessary to initiate longer-term forecasts, and it represents an essential piece of information for assessing real-time changes in the economic.
+are based on assessments of the current and near future economic conditions, which are available with a significant delay. Nowcasting GDP growth is necessary to initiate longer-term forecasts, and it represents an essential piece of information for assessing real-time changes in the economy.
 
 Within the French Treasury, two approches are used to forecast short-term GDP growth:
 
@@ -15,7 +15,7 @@ This package provides functions to implement the first approach to GDP forecasti
 
 # Installation
 
-The package has been tested with R 3.6 and >= 4.0.5.
+The package has been tested with R 3.6 and R >= 4.0.5.
 
 ```r
 # install.packages("devtools")
