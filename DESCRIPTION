@@ -16,7 +16,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Suggests: 
     knitr,
-    pandoc,
+    markdown,
     rmarkdown,
     stringr,
     testthat (>= 3.0.0)
