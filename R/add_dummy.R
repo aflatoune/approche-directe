@@ -10,7 +10,7 @@
 add_dummy <- function(X, names, ...) {
     conds <- rlang::quos(...)
 
-    if (length(names) != length(conds)) {
+    if (!identical(length(names), length(conds))) {
         stop("The number of \"names\" must be equal to the number of ",
              "\"conds\".", call. = FALSE)
     }
