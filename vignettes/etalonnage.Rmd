@@ -110,14 +110,19 @@ performances, `etalonnage` package implements "rolling-origin-update evaluation"
 
 ### Example
 
-Let's illustrate the whole process with a example. Suppose we want to forecast French growth at 2018Q4 (which is released by the INSEE 30 days after the end of the quarter) standing at December 2018. Suppose that the first date to forecast is 2015Q1 and that two type of models must be evaluated: one based on a random forest, another one based on ridge regression.
+Let's illustrate the whole process with a example. Suppose we want to forecast French growth at 2018Q4 (which is released by the INSEE 30 days after the end of the quarter) standing at December 2018. Suppose that the first date to forecast is 2015Q1 and that two type of models must be evaluated: one based on a random forest, another one based on XGBoost.
 
-At December 2018, all values in `fr_x` are observed except household consumption in December and IPI in November and December. Thus, the columns containing these values must be truncated and extended with an ARIMA model each time a forecast is performed:
+At December 2018, all values in `fr_x` are observed except Banque de France surveys in December, household consumption in December and IPI in November and December. Thus, the columns containing these values must be truncated and extended with an ARIMA model each time a forecast is performed:
 
 ```{r}
+bdf_3_cols <- names(fr_x)[stringr::str_detect(names(fr_x), "Bdf_3")]
 conso3_cols <- names(fr_x)[stringr::str_detect(names(fr_x), "conso_3")]
 ipi2_3_cols <- names(fr_x)[stringr::str_detect(names(fr_x), "ipi_[2-3]")]
-extend_cols <- c(conso3_cols, ipi2_3_cols)
+extend_cols <- c(bdf_3_cols, conso3_cols, ipi2_3_cols)
+n_extend <- c(rep(1, 8), rep(2, 4))
+list_cols <- list(extend_cols, n_extend)
+# forecast 1 quarter ahead for BdF and consumption series (i.e. for 8 series)
+# and 2 quarters ahed for IPI series (i.e. for 4 series)
 ```
 
 Fit the models:
@@ -128,7 +133,7 @@ rf <- etalonnage(
     X = fr_x,
     y = fr_y$target,
     regressor = "randomForest",
-    cols = extend_cols,
+    cols = list_cols,
     forecast_origin = "2014-10-01",
     scale = "none",
     mtry = 55,
@@ -142,7 +147,7 @@ xgb <- etalonnage(
     X = fr_x,
     y = fr_y$target,
     regressor = "xgboost",
-    cols = extend_cols,
+    cols = list_cols,
     forecast_origin = "2014-10-01",
     scale = "none",
     nrounds = 1500,
