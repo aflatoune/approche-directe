@@ -21,8 +21,10 @@
 #' must be of the form `"YYYY-MM-01"`.
 #' @param regressor A character. For now, only `"randomForest"`, `"xgboost"`
 #' `"glmnet"` and `"lm"` are accepted.
-#' @param cols A vector of characters indicating columns to extend. Series
-#' are extended with an ARIMA(p,d,q) model - if missing defaults to `NULL`.
+#' @param cols A list of 2 elements. The 1st one contains a vector of characters
+#' indicating columns to extend, the 2nd one contains a vector indicating the
+#' number of samples to remove and predict for each column. Series are extended
+#' with an ARIMA(p,d,q) model - if missing defaults to `NULL`.
 #' @param scale Indicates  whether to leave unchanged, center or scale `X`.
 #' Must be one of `"none`, `"center"` or `"scale"`.
 #' @param frequency A character indicating the date frequency - if missing
@@ -86,16 +88,16 @@ etalonnage <-
             if (identical(scale, "center")) {
                 X_ <- X_ %>%
                     standardize_data(scale = FALSE) %>%
-                    extend_series(cols = cols) %>%
+                    extend_series(cols = cols[[1]], n = cols[[2]]) %>%
                     as.matrix()
             } else if (identical(scale, "scale")) {
                 X_ <- X_ %>%
                     standardize_data(scale = TRUE) %>%
-                    extend_series(cols = cols) %>%
+                    extend_series(cols = cols[[1]], n = cols[[2]]) %>%
                     as.matrix()
             } else if (identical(scale, "none")) {
                 X_ <- X_ %>%
-                    extend_series(cols = cols) %>%
+                    extend_series(cols = cols[[1]], n = cols[[2]]) %>%
                     as.matrix()
             }
 
