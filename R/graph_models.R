@@ -2,7 +2,7 @@
 #'
 #' @param ... Objects of class etalonnage.
 #' @param start_graph A character indicating the first date to plot, must be of
-#' the form `"YYYY-MM-01"` - if missing defaults to `x$first_date`.
+#' the form `"YYYY-MM-01"` - if missing defaults to `NULL`.
 #' @param title A character indicating a title for the plot - if missing
 #' defaults to `NULL`.
 #' @param legend_text_size A numeric - if missing defaults to 12.
@@ -18,7 +18,7 @@
 #' @return A ggplot2 plot.
 #' @export
 graph_models <- function(...,
-                    start_graph,
+                    start_graph = NULL,
                     title = NULL,
                     legend_text_size = 12,
                     axis_text_size = 11,
@@ -32,7 +32,8 @@ graph_models <- function(...,
         purrr::reduce(dplyr::full_join, by = "date") %>%
         tidyr::pivot_longer(-date,
                             names_to = "model",
-                            values_to = "value")
+                            values_to = "value") %>%
+        dplyr::filter(date >= start_graph)
 
     if (is.null(title)) {
         title <-
