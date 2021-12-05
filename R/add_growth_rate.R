@@ -9,7 +9,7 @@
 #'
 #' @return A df/tibble augmented with converted variables.
 #' @export
-growth_rate <- function(X, exclude = NULL, inplace = TRUE) {
+add_growth_rate <- function(X, exclude = NULL, inplace = TRUE) {
     if (isFALSE(inplace)) {
         X <- X %>%
             dplyr::mutate(
