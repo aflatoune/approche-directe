@@ -14,7 +14,7 @@ add_diff <- function(X, exclude = NULL, n = 1L) {
         dplyr::mutate(
             dplyr::across(-{{ exclude }},
                           list(~ . - dplyr::lag(., n = n)),
-                          .names = "{.col}_fd_{n}")
+                          .names = "{.col}_fd{n}")
         )
     return(X)
 }
