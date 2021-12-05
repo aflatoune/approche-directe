@@ -9,7 +9,7 @@
 #'
 #' @return A df/tibble with standardized columns
 #' @export
-standardize_data <- function(X, exclude = NULL, scale = FALSE) {
+standardize <- function(X, exclude = NULL, scale = FALSE) {
     if (isTRUE(scale)) {
         standardized_X <- X %>%
             dplyr::mutate(dplyr::across(-{{ exclude }},
