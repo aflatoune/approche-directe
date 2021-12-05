@@ -6,7 +6,7 @@
 \usage{
 graph_models(
   ...,
-  start_graph,
+  start_graph = NULL,
   title = NULL,
   legend_text_size = 12,
   axis_text_size = 11,
@@ -20,7 +20,7 @@ graph_models(
 \item{...}{Objects of class etalonnage.}
 
 \item{start_graph}{A character indicating the first date to plot, must be of
-the form \code{"YYYY-MM-01"} - if missing defaults to \code{x$first_date}.}
+the form \code{"YYYY-MM-01"} - if missing defaults to \code{NULL}.}
 
 \item{title}{A character indicating a title for the plot - if missing
 defaults to \code{NULL}.}

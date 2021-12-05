@@ -2,22 +2,26 @@
 % Please edit documentation in R/extend_series.R
 \name{extend_series}
 \alias{extend_series}
-\title{Extend series with the best ARIMA(p,d,q) model}
+\title{Extend series}
 \usage{
-extend_series(X, cols, n = 1)
+extend_series(X, columns, n, mode = c("ARIMA", "constant"))
 }
 \arguments{
 \item{X}{A df/tibble.}
 
-\item{cols}{A vector of characters indicating columns to extend.}
+\item{columns}{A vector of characters indicating columns to extend.}
 
-\item{n}{An integer indicating the number of samples to remove and predict.
-TODO: generalize to n > 1}
+\item{n}{An vector indicating the number of samples to remove and predict for
+each column name in \code{columns}. Be careful to respect the order in \code{columns}.}
+
+\item{mode}{Indicates to extend columns using an ARMA(p,d,q) model or by
+replacing missing values with the last observed value .
+Must be one of  \code{"ARIMA"} or \code{"constant"}.}
 }
 \value{
 A df/tibble
 }
 \description{
-The function relies on forecast::auto.arima.
+This function relies on forecast::auto.arima.
 See \url{https://www.rdocumentation.org/packages/forecast/versions/8.15/topics/auto.arima}
 }
