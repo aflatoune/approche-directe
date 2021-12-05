@@ -14,12 +14,13 @@ to_growth_rate <- function(X, exclude = NULL, inplace = TRUE) {
         X <- X %>%
             dplyr::mutate(
                 dplyr::across(-{{ exclude }},
-                              list(~ . - dplyr::lag(.)),
+                              list(~ (. / dplyr::lag(.)) - 1),
                               .names = "{.col}_gr")
             )
     } else {
         X  <- X %>% dplyr::mutate(dplyr::across(-{{ exclude }},
-            ~ (. - dplyr::lag(.)) / dplyr::lag(.)))
+                                                ~ ((. / dplyr::lag(.)) - 1))
+        )
     }
     return(X)
 }
