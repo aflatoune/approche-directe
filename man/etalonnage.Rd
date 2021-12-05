@@ -10,7 +10,8 @@ etalonnage(
   y,
   forecast_origin,
   regressor = c("randomForest", "xgboost", "glmnet", "lm"),
-  cols = NULL,
+  extend = NULL,
+  extend_mode = "constant",
   scale = c("none", "center", "scale"),
   frequency = "quarter",
   seed = 313,
@@ -20,7 +21,8 @@ etalonnage(
 \arguments{
 \item{name}{A character indicating a name for the analysis.}
 
-\item{X}{A tibble/df containing the regressors. Must contain a date column.}
+\item{X}{A tibble/df containing the regressors at a quarterly frequency.
+Must contain a date column.}
 
 \item{y}{A vector containing the target variable.}
 
@@ -30,8 +32,15 @@ must be of the form \code{"YYYY-MM-01"}.}
 \item{regressor}{A character. For now, only \code{"randomForest"}, \code{"xgboost"}
 \code{"glmnet"} and \code{"lm"} are accepted.}
 
-\item{cols}{A vector of characters indicating columns to extend. Series
-are extended with an ARIMA(p,d,q) model - if missing defaults to \code{NULL}.}
+\item{extend}{A list of 2 elements. The 1st one contains a vector of
+characters indicating columns to extend when fitting models, the 2nd one
+contains a vector indicating the number of samples to remove and predict for
+each column. Series are extended with an ARIMA(p,d,q) model - if missing
+defaults to \code{NULL}.}
+
+\item{extend_mode}{Indicates whether to extend columns in \code{extend_cols[[1]]}
+using an ARMA(p,d,q) model or by replacing missing values with the last
+observed value - if missing defaults to \code{"constant"}.}
 
 \item{scale}{Indicates  whether to leave unchanged, center or scale \code{X}.
 Must be one of \verb{"none}, \code{"center"} or \code{"scale"}.}
@@ -42,6 +51,9 @@ defaults to \code{"quarter"}.}
 \item{seed}{A numeric value interpreted as an integer.}
 
 \item{...}{Aditionnal arguments to pass to the regressor.}
+
+\item{X_month}{A tibble/df containing the regressors at a monthly frequency.
+Must contain a date column. \code{X_month} is used to extend series.}
 }
 \value{
 An object from S3 class \code{etalonnage}.
@@ -54,10 +66,10 @@ set. The date of the first sample to predict is given by \code{forecast_origin}
 plus 1 quarter. Note that the training set always starts at the first sample
 of \code{X}.
 To take into account the non-synchronicity of data publications, use the
-\code{cols} argument to indicate which series need to be extended. In this way
-the forecast accuracy can be assessed on the basis of a pseudo real-time
-experiment i.e. replicating the timeliness of the releases of the series
-by taking into account their publications lags. This ensures to consider
-only those values of the series that would have been available on the date
-on which the forecasts were calculated.
+\code{extend} argument to indicate which series need to
+be extended. This way the forecast accuracy can be assessed on the basis of
+a pseudo real-time experiment i.e. replicating the timeliness of the
+releases of the series by taking into account their publications lags.
+This ensures to consider only those values of the series that would have
+been available on the date on which the forecasts were calculated.
 }

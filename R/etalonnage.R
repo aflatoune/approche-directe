@@ -7,24 +7,30 @@
 #' plus 1 quarter. Note that the training set always starts at the first sample
 #' of `X`.
 #' To take into account the non-synchronicity of data publications, use the
-#' `cols` argument to indicate which series need to be extended. In this way
-#' the forecast accuracy can be assessed on the basis of a pseudo real-time
-#' experiment i.e. replicating the timeliness of the releases of the series
-#' by taking into account their publications lags. This ensures to consider
-#' only those values of the series that would have been available on the date
-#' on which the forecasts were calculated.
-#'
+#' `extend` argument to indicate which series need to
+#' be extended. This way the forecast accuracy can be assessed on the basis of
+#' a pseudo real-time experiment i.e. replicating the timeliness of the
+#' releases of the series by taking into account their publications lags.
+#' This ensures to consider only those values of the series that would have
+#' been available on the date on which the forecasts were calculated.
 #' @param name A character indicating a name for the analysis.
-#' @param X A tibble/df containing the regressors. Must contain a date column.
+#' @param X A tibble/df containing the regressors at a quarterly frequency.
+#' Must contain a date column.
 #' @param y A vector containing the target variable.
 #' @param forecast_origin A character indicating the first forecast origin, it
 #' must be of the form `"YYYY-MM-01"`.
+#' @param X_month A tibble/df containing the regressors at a monthly frequency.
+#' Must contain a date column. `X_month` is used to extend series.
 #' @param regressor A character. For now, only `"randomForest"`, `"xgboost"`
 #' `"glmnet"` and `"lm"` are accepted.
-#' @param cols A list of 2 elements. The 1st one contains a vector of characters
-#' indicating columns to extend, the 2nd one contains a vector indicating the
-#' number of samples to remove and predict for each column. Series are extended
-#' with an ARIMA(p,d,q) model - if missing defaults to `NULL`.
+#' @param extend A list of 2 elements. The 1st one contains a vector of
+#' characters indicating columns to extend when fitting models, the 2nd one
+#' contains a vector indicating the number of samples to remove and predict for
+#' each column. Series are extended with an ARIMA(p,d,q) model - if missing
+#' defaults to `NULL`.
+#' @param extend_mode Indicates whether to extend columns in `extend_cols[[1]]`
+#' using an ARMA(p,d,q) model or by replacing missing values with the last
+#' observed value - if missing defaults to `"constant"`.
 #' @param scale Indicates  whether to leave unchanged, center or scale `X`.
 #' Must be one of `"none`, `"center"` or `"scale"`.
 #' @param frequency A character indicating the date frequency - if missing
@@ -40,7 +46,8 @@ etalonnage <-
              y,
              forecast_origin,
              regressor = c("randomForest", "xgboost", "glmnet", "lm"),
-             cols = NULL,
+             extend = NULL,
+             extend_mode = "constant",
              scale = c("none", "center", "scale"),
              frequency = "quarter",
              seed = 313,
@@ -52,7 +59,7 @@ etalonnage <-
         scale <- match.arg(scale)
         message(
             "Note: The date column is used to build the train/test scheme.",
-            " It is not used when fitting the model."
+            " It is not used when fitting the models."
         )
 
         forecast_origin <- as.Date(forecast_origin)
@@ -77,58 +84,52 @@ etalonnage <-
             dplyr::select(-date)
 
         pb <- try(utils::txtProgressBar(min = 1,
-                                    max = max(seq_along(train_index)),
-                                    style = 3),
+                                        max = max(seq_along(train_index)),
+                                        style = 3),
                   silent = TRUE)
         set.seed(seed)
         for (i in seq_along(train_index)) {
             y_ <- y[train_index[[i]]]
-            X_ <- X[train_index[[i]],]
+            X_ <- X[train_index[[i]], ]
 
             if (identical(scale, "center")) {
                 X_ <- X_ %>%
-                    standardize_data(scale = FALSE) %>%
-                    extend_series(cols = cols[[1]], n = cols[[2]]) %>%
-                    as.matrix()
+                    standardize_data(scale = FALSE)
             } else if (identical(scale, "scale")) {
                 X_ <- X_ %>%
-                    standardize_data(scale = TRUE) %>%
-                    extend_series(cols = cols[[1]], n = cols[[2]]) %>%
-                    as.matrix()
+                    standardize_data(scale = TRUE)
             } else if (identical(scale, "none")) {
-                X_ <- X_ %>%
-                    extend_series(cols = cols[[1]], n = cols[[2]]) %>%
-                    as.matrix()
+                X_ <- X_
             }
 
-            if (identical(regressor, "lm")) {
-                fit <- lm(y_ ~ ., data = as.data.frame(X_))
-            }
-            else {
-                fit <- regressor(X_, y_, ...)
+            if (!is.null(extend)) {
+                X_ <- X_ %>%
+                    extend_series(columns = extend[[1]],
+                                  n = extend[[2]],
+                                  mode = extend_mode)  %>%
+                    as.matrix()
+            } else {
+                X_ <- X_ %>% as.matrix()
             }
 
             if (identical(i, 1L) & !identical(regressor, "lm")) {
-                fitted_values <- c(fitted_values, predict(fit, X_,))
+                fit <- lm(y_ ~ ., data = as.data.frame(X_))
+                fitted_values <- c(fitted_values, predict(fit, X_, ))
+                predicted_values <- c(predicted_values,
+                                      predict(fit, X[test_index[[i]], ]))
             } else if (identical(i, 1L) & identical(regressor, "lm")) {
-                fitted_values <- c(fitted_values, predict(fit, as.data.frame(X_),))
-            }
-
-            if (identical(regressor, "lm")) {
-                predicted_values <-
-                    c(predicted_values,
-                      predict(fit, X[test_index[[i]],]))
-            } else {
-                predicted_values <-
-                    c(predicted_values,
-                      predict(fit, as.matrix(X[test_index[[i]],])))
+                fit <- regressor(X_, y_, ...)
+                fitted_values <- c(fitted_values, predict(fit, as.data.frame(X_), ))
+                predicted_values <- c(predicted_values,
+                                      predict(fit, as.matrix(X[test_index[[i]], ])))
             }
 
             try(utils::setTxtProgressBar(pb, i), silent = TRUE)
         }
 
         n_test <- length(predicted_values)
-        test_rmse <- sqrt(mean((predicted_values[-n_test] - y[-train_index[[1]]]) ^ 2))
+        test_rmse <-
+            sqrt(mean((predicted_values[-n_test] - y[-train_index[[1]]]) ^ 2))
         test_mae <-
             mean(abs(predicted_values[-n_test] - y[-train_index[[1]]]))
         test_mda <-
