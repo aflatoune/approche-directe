@@ -24,17 +24,17 @@ acquis <- function(X,
         X[[col_name]] <- NA
 
         if (identical(month, 0)) {
-            X[[col_name]] <-
+            X[col_name] <-
                 (3 * lag(X[m3]) / (dplyr::lag(X[m1]) +
                                        dplyr::lag(X[m2]) +
                                        dplyr::lag(X[m3])) - 1)
         } else if (identical(month, 1)) {
-            X[[col_name]] <-
+            X[col_name] <-
                 (3 * X[m1] / (dplyr::lag(X[m1]) +
                                   dplyr::lag(X[m2]) +
                                   dplyr::lag(X[m3])) - 1)
         } else if (identical(month, 2)) {
-            X[[col_name]] <-
+            X[col_name] <-
                 ((X[m1] + 2*X[m2]) / (dplyr::lag(X[m1]) +
                                           dplyr::lag(X[m2]) +
                                           dplyr::lag(X[m3])) - 1)
