@@ -51,9 +51,6 @@ defaults to \code{"quarter"}.}
 \item{seed}{A numeric value interpreted as an integer.}
 
 \item{...}{Aditionnal arguments to pass to the regressor.}
-
-\item{X_month}{A tibble/df containing the regressors at a monthly frequency.
-Must contain a date column. \code{X_month} is used to extend series.}
 }
 \value{
 An object from S3 class \code{etalonnage}.
@@ -69,7 +66,7 @@ To take into account the non-synchronicity of data publications, use the
 \code{extend} argument to indicate which series need to
 be extended. This way the forecast accuracy can be assessed on the basis of
 a pseudo real-time experiment i.e. replicating the timeliness of the
-releases of the series by taking into account their publications lags.
+releases of the series by taking into account their publication lags.
 This ensures to consider only those values of the series that would have
 been available on the date on which the forecasts were calculated.
 }

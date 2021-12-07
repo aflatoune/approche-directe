@@ -10,7 +10,7 @@
 #' `extend` argument to indicate which series need to
 #' be extended. This way the forecast accuracy can be assessed on the basis of
 #' a pseudo real-time experiment i.e. replicating the timeliness of the
-#' releases of the series by taking into account their publications lags.
+#' releases of the series by taking into account their publication lags.
 #' This ensures to consider only those values of the series that would have
 #' been available on the date on which the forecasts were calculated.
 #' @param name A character indicating a name for the analysis.
@@ -19,8 +19,6 @@
 #' @param y A vector containing the target variable.
 #' @param forecast_origin A character indicating the first forecast origin, it
 #' must be of the form `"YYYY-MM-01"`.
-#' @param X_month A tibble/df containing the regressors at a monthly frequency.
-#' Must contain a date column. `X_month` is used to extend series.
 #' @param regressor A character. For now, only `"randomForest"`, `"xgboost"`
 #' `"glmnet"` and `"lm"` are accepted.
 #' @param extend A list of 2 elements. The 1st one contains a vector of
@@ -89,39 +87,44 @@ etalonnage <-
                   silent = TRUE)
         set.seed(seed)
         for (i in seq_along(train_index)) {
-            y_ <- y[train_index[[i]]]
-            X_ <- X[train_index[[i]], ]
+            y_train <- y[train_index[[i]]]
+            X_train <- X[train_index[[i]], ]
 
             if (identical(scale, "center")) {
-                X_ <- X_ %>%
+                X_train <- X_train %>%
                     standardize_data(scale = FALSE)
             } else if (identical(scale, "scale")) {
-                X_ <- X_ %>%
+                X_train <- X_train %>%
                     standardize_data(scale = TRUE)
             } else if (identical(scale, "none")) {
-                X_ <- X_
+                X_train <- X_train
             }
 
             if (!is.null(extend)) {
-                X_ <- X_ %>%
+                X_train <- X_train %>%
                     extend_series(columns = extend[[1]],
                                   n = extend[[2]],
                                   mode = extend_mode)  %>%
                     as.matrix()
             } else {
-                X_ <- X_ %>% as.matrix()
+                X_train <- X_train %>% as.matrix()
             }
 
-            if (identical(i, 1L) & !identical(regressor, "lm")) {
-                fit <- lm(y_ ~ ., data = as.data.frame(X_))
-                fitted_values <- c(fitted_values, predict(fit, X_, ))
+            if (identical(regressor, "lm")) {
+                fit <- lm(y_train ~ ., data = as.data.frame(X_train))
                 predicted_values <- c(predicted_values,
-                                      predict(fit, X[test_index[[i]], ]))
-            } else if (identical(i, 1L) & identical(regressor, "lm")) {
-                fit <- regressor(X_, y_, ...)
-                fitted_values <- c(fitted_values, predict(fit, as.data.frame(X_), ))
+                                      predict(fit, X[test_index[[i]],]))
+            }
+            else {
+                fit <- regressor(X_train, y_train, ...)
                 predicted_values <- c(predicted_values,
-                                      predict(fit, as.matrix(X[test_index[[i]], ])))
+                                      predict(fit, as.matrix(X[test_index[[i]],])))
+            }
+
+            if (identical(i, 1L) & identical(regressor, "lm")) {
+                fitted_values <- c(fitted_values, predict(fit, as.data.frame(X_train),))
+            } else if (identical(i, 1L) & !identical(regressor, "lm")) {
+                fitted_values <- c(fitted_values, predict(fit, X_train,))
             }
 
             try(utils::setTxtProgressBar(pb, i), silent = TRUE)
