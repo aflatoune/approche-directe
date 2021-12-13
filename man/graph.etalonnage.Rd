@@ -12,6 +12,8 @@
   axis_text_size = 11,
   annotation_size = 5.5,
   date_breaks = "1 year",
+  y_limits = NULL,
+  annotate = FALSE,
   annotation_x = 45,
   annotation_y = -0.06
 )
@@ -33,6 +35,11 @@ defaults to \code{NULL}.}
 
 \item{date_breaks}{A character indicating date breaks on the x axis of the
 plot - if missing defaults to \code{"1 year"}.}
+
+\item{y_limits}{A vector of two non-\code{NULL} numerics (ymin, ymax) - if missing
+defaults to \code{NULL}.}
+
+\item{annotate}{A logical - if missing defaults to \code{FALSE}.}
 
 \item{annotation_x}{A numeric indicating the position of the annonation on
 x-axis - if missing defaults to 45 (days).}
