@@ -1,3 +1,22 @@
+#' @keywords internal
+prepare_comp <- function(x) {
+    if (!inherits(x, "etalonnage")) {
+        stop("x is not of class etalonnage.")
+    }
+
+    pred <- c(x$fitted_values, x$predicted_values)
+    date <- seq.Date(
+        from = lubridate::ymd(x$first_date),
+        by = "quarter",
+        length.out = length(pred)
+    )
+    col_name <- x$name
+    data <- data.frame(date,  pred) %>%
+        dplyr::rename({{ col_name }} := pred)
+    return(data)
+}
+
+
 #' Compare models predictions
 #'
 #' @param ... Objects of class etalonnage.
@@ -86,23 +105,4 @@ graph_models <- function(...,
         ) +
         scale_y_continuous(labels = scales::percent)
     return(g)
-}
-
-
-#' @keywords internal
-prepare_comp <- function(x) {
-    if (!inherits(x, "etalonnage")) {
-        stop("x is not of class etalonnage.")
-    }
-
-    pred <- c(x$fitted_values, x$predicted_values)
-    date <- seq.Date(
-        from = lubridate::ymd(x$first_date),
-        by = "quarter",
-        length.out = length(pred)
-    )
-    col_name <- x$name
-    data <- data.frame(date,  pred) %>%
-        dplyr::rename({{ col_name }} := pred)
-    return(data)
 }

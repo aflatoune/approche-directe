@@ -39,11 +39,7 @@ extend_series <-
             }
 
             X <- X %>%
-                dplyr::mutate({
-                    {
-                        col
-                    }
-                } := serie)
+                dplyr::mutate({{ col }} :=  serie)
         }
         return(X)
     }
