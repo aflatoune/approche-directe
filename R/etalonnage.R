@@ -25,11 +25,10 @@
 #' @param extend A list of 2 elements. The 1st one contains a vector of
 #' characters indicating columns to extend when fitting models, the 2nd one
 #' contains a vector indicating the number of samples to remove and predict for
-#' each column. Series are extended with an ARIMA(p,d,q) model - if missing
-#' defaults to `NULL`.
+#' each column - if missing defaults to `NULL`.
 #' @param extend_mode Indicates whether to extend columns in `extend_cols[[1]]`
 #' using an ARMA(p,d,q) model or by replacing missing values with the last
-#' observed value - if missing defaults to `"constant"`.
+#' observed value. Must be one of  `"ARIMA"` or `"constant"`.
 #' @param scale Indicates  whether to leave unchanged, center or scale `X`.
 #' Must be one of `"none`, `"center"` or `"scale"`.
 #' @param frequency A character indicating the date frequency - if missing
@@ -46,7 +45,7 @@ etalonnage <-
              forecast_origin,
              regressor = c("randomForest", "xgboost", "glmnet", "lm"),
              extend = NULL,
-             extend_mode = "constant",
+             extend_mode = c("ARIMA", "constant"),
              scale = c("none", "center", "scale"),
              frequency = "quarter",
              seed = 313,
@@ -55,6 +54,7 @@ etalonnage <-
             stop("X must contain a column \"date\" containing Date objects.")
         }
         regressor <- match.arg(regressor)
+        extend_mode <- match.arg(extend_mode)
         scale <- match.arg(scale)
         message(
             "Note: The date column is used to build the train/test scheme.",
