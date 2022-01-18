@@ -13,6 +13,7 @@
 #' releases of the series by taking into account their publication lags.
 #' This ensures to consider only those values of the series that would have
 #' been available on the date on which the forecasts were calculated.
+#'
 #' @param name A character indicating a name for the analysis.
 #' @param X A tibble/df containing the regressors at a quarterly frequency.
 #' Must contain a date column.
@@ -24,11 +25,10 @@
 #' @param extend A list of 2 elements. The 1st one contains a vector of
 #' characters indicating columns to extend when fitting models, the 2nd one
 #' contains a vector indicating the number of samples to remove and predict for
-#' each column. Series are extended with an ARIMA(p,d,q) model - if missing
-#' defaults to `NULL`.
+#' each column - if missing defaults to `NULL`.
 #' @param extend_mode Indicates whether to extend columns in `extend_cols[[1]]`
 #' using an ARMA(p,d,q) model or by replacing missing values with the last
-#' observed value - if missing defaults to `"constant"`.
+#' observed value. Must be one of  `"ARIMA"` or `"constant"`.
 #' @param scale Indicates  whether to leave unchanged, center or scale `X`.
 #' Must be one of `"none`, `"center"` or `"scale"`.
 #' @param frequency A character indicating the date frequency - if missing
@@ -45,7 +45,7 @@ etalonnage <-
              forecast_origin,
              regressor = c("randomForest", "xgboost", "glmnet", "lm"),
              extend = NULL,
-             extend_mode = "constant",
+             extend_mode = c("ARIMA", "constant"),
              scale = c("none", "center", "scale"),
              frequency = "quarter",
              seed = 313,
@@ -54,6 +54,7 @@ etalonnage <-
             stop("X must contain a column \"date\" containing Date objects.")
         }
         regressor <- match.arg(regressor)
+        extend_mode <- match.arg(extend_mode)
         scale <- match.arg(scale)
         message(
             "Note: The date column is used to build the train/test scheme.",
@@ -89,13 +90,14 @@ etalonnage <-
         for (i in seq_along(train_index)) {
             y_train <- y[train_index[[i]]]
             X_train <- X[train_index[[i]], ]
+            X_test <- X[test_index[[i]], ]
 
             if (identical(scale, "center")) {
                 X_train <- X_train %>%
-                    standardize_data(scale = FALSE)
+                    standardize(mode = scale)
             } else if (identical(scale, "scale")) {
                 X_train <- X_train %>%
-                    standardize_data(scale = TRUE)
+                    standardize(mode = scale)
             } else if (identical(scale, "none")) {
                 X_train <- X_train
             }
@@ -112,13 +114,12 @@ etalonnage <-
 
             if (identical(regressor, "lm")) {
                 fit <- lm(y_train ~ ., data = as.data.frame(X_train))
-                predicted_values <- c(predicted_values,
-                                      predict(fit, X[test_index[[i]],]))
+                predicted_values <- c(predicted_values, predict(fit, X_test))
             }
             else {
                 fit <- regressor(X_train, y_train, ...)
                 predicted_values <- c(predicted_values,
-                                      predict(fit, as.matrix(X[test_index[[i]],])))
+                                      predict(fit, as.matrix(X_test)))
             }
 
             if (identical(i, 1L) & identical(regressor, "lm")) {
@@ -133,10 +134,8 @@ etalonnage <-
         n_test <- length(predicted_values)
         test_rmse <-
             sqrt(mean((predicted_values[-n_test] - y[-train_index[[1]]]) ^ 2))
-        test_mae <-
-            mean(abs(predicted_values[-n_test] - y[-train_index[[1]]]))
-        test_mda <-
-            mda(y[-train_index[[1]]], predicted_values[-n_test])
+        test_mae <- mean(abs(predicted_values[-n_test] - y[-train_index[[1]]]))
+        test_mda <- mda(y[-train_index[[1]]], predicted_values[-n_test])
         out <- list(
             name = name,
             first_date = first_date,

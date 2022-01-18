@@ -1,6 +1,6 @@
 #' Compute growth gains (acquis de croissance) at a given month.
 #'
-#'  Should be used on quarterly data returned by `month_to_quarter` function.
+#' Must be used on quarterly data returned by `month_to_quarter` function.
 #'
 #' @param X A tibble/df with quarterly data returned by
 #' @param cols Vector of characters, indicators for which the gain is computed.

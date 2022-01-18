@@ -4,7 +4,7 @@
 \alias{standardize}
 \title{Standardize data}
 \usage{
-standardize(X, exclude = NULL, scale = FALSE)
+standardize(X, exclude = NULL, mode = c("center", "scale"))
 }
 \arguments{
 \item{X}{A df/tibble}
@@ -13,8 +13,8 @@ standardize(X, exclude = NULL, scale = FALSE)
 computing the fd. Names can be passed directly as if they were variables in
 the environment - if missing defaults to \code{NULL}.}
 
-\item{scale}{A logical indicating whether to scale data or only center - if
-missing defaults to \verb{FALSE``.}}
+\item{scale}{A character indicating whether to scale data or only center.
+Must be one of "center" or "scale".}
 }
 \value{
 A df/tibble with standardized columns

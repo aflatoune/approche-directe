@@ -25,6 +25,9 @@ graph.default <- function(x, ...) {
 #' @param annotation_size A numeric - if missing defaults to 5.5.
 #' @param date_breaks A character indicating date breaks on the x axis of the
 #' plot - if missing defaults to `"1 year"`.
+#' @param y_limits A vector of two non-`NULL` numerics (ymin, ymax) - if missing
+#' defaults to `NULL`.
+#' @param annotate A logical - if missing defaults to `FALSE`.
 #' @param annotation_x A numeric indicating the position of the annonation on
 #' x-axis - if missing defaults to 45 (days).
 #' @param annotation_y A numeric indicating the position of the annonation on
@@ -40,6 +43,8 @@ graph.etalonnage <-
              axis_text_size = 11,
              annotation_size = 5.5,
              date_breaks = "1 year",
+             y_limits = NULL,
+             annotate = FALSE,
              annotation_x = 45,
              annotation_y = -.06) {
         if (!inherits(x, "etalonnage")) {
@@ -118,16 +123,26 @@ graph.etalonnage <-
             ) +
             scale_y_continuous(labels = scales::percent) +
             geom_vline(xintercept = x$forecast_origin,
-                       col = "gray40",
-                       lwd = .5) +
-            annotate(
-                "text",
-                x = x$forecast_origin - annotation_x,
-                y = annotation_y,
-                label = "Prévision",
-                angle = 90,
-                col = "gray40",
-                size = annotation_size
-                )
+                       col = "gray30",
+                       lwd = .5)
+
+        if (!is.null(y_limits)) {
+            g <- g +
+            coord_cartesian(ylim = c(y_limits[1], y_limits[2]))
+        }
+
+        if (isTRUE(annotate)) {
+            g <- g +
+                annotate(
+                    "text",
+                    x = x$forecast_origin - annotation_x,
+                    y = annotation_y,
+                    label = "Prévision",
+                    angle = 90,
+                    col = "gray30",
+                    size = annotation_size
+                    )
+        }
+
         return(g)
     }
