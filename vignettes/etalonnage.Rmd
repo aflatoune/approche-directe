@@ -57,12 +57,20 @@ fr_y <- build_target(fr_y,
 head(fr_y, n = 3)
 ```
 
-Pivot regressors to have one column for each month in a quarter (and thus match the frequency of the target) using `month_to_quarter`, and add all regressors first-diff to `fr_x` using `add_diff`:
+Add all regressors first-diff to `fr_x` using `add_diff` and pivot regressors to have one column for each month in a quarter (and thus match the frequency of the target) using `month_to_quarter`:
 
 ```{r}
 fr_x <- fr_x %>%
-    month_to_quarter() %>%
-    add_diff(exclude = "date")
+    add_diff(exclude = "date") %>%
+    month_to_quarter()
+```
+
+Now suppose that one wants to forecast the French GDP growth rate in 2000Q2.  Depending on the horizon, the forecast is computed conditional on the information released until April 2000, May 2000 or June 2000. Consider June 2000. At this horizon, 3 months (April 2000, May 2000 and June 2000) of Insee survey variables are available since these variables are released with no delay (i.e. during the month to which they relate) but only 2 months (April 2000 and May 2000) of Banque de France survey variables are available since these variables are released with a delay of 1 month. As a result the final dataset contains some values that shouldn't be observed and must be dropped. Regarding household consumption and IPI, only one month is available but it would be too costly to remove these variables given their importance to the forecast. To deal with these, `etalonnage` package contains a function `acquis` that transform series with `NA` by computing a "granted" growth (acquis de croissance). 
+
+```{r}
+fr_x <- fr_x %>%
+  acquis(cols = c("ipi", "conso"), month = 1) %>%
+  dplyr::select(-dplyr::contains(c("Bdf_fd1_3", "Bdf_3")))
 ```
 
 To deal with `NA` or structural breaks, it is common to add dummies to the regressors. This can be done using `add_dummy`: pass a `list` of names for the dummies and add the
@@ -77,15 +85,7 @@ fr_x <- fr_x %>%
     )
 ```
 
-It is also possible to convert columns values to growth rate using `to_growth_rate` (be careful to exclude date, dummies etc. from the processing):
-
-```{r}
-fr_x <- fr_x %>%
-  to_growth_rate(
-    exclude = c("date", dplyr::starts_with("dummy"), dplyr::contains("fd_")),
-    inplace = TRUE
-    )
-```
+It is also possible to convert columns values to growth rate using `to_growth_rate`.
 
 Make sure that `fr_x` and `fr_y` starts at the same date and replace `NA` with some value (here 0):
 
@@ -101,31 +101,15 @@ fr_x[is.na(fr_x)] <- 0
 During a forecast exercise, it is common that the forecast is performed using information provided by series released at a higher frequency than the target. These series
 are released with various delays so that the forecast is conditioned on the sample of series that are known at the time the estimation is performed. In order to take into account the non-synchronicity of data publications (and thus to properly assess the performances of a amodel), the forecast accuracy is assessed on the basis of a pseudo real-time experiment. This kind of evaluation aims at replicating the timeliness of the releases of the series by taking into account their publications lags. In this framework, the series are truncated in order to consider only those values of the series that would have been available on the date on which the forecasts were calculated. 
 
-Suppose for example that one wants to forecast the French GDP growth rate in 2000Q2.  Depending on the horizon, the forecast is computed conditional on the information released until April 2000, May 2000 or June 2000. Consider June 2000. At this horizon, 3 months (April 2000, May 2000 and June 2000) of Insee survey variables are available since these variables are released with no delay (i.e. during the month to which they relate) but only 2 months (April 2000 and May 2000) of Banque de France survey variables are available since these variables are released with a delay of 1 month. As a result the final dataset contains some values that shouldn't be observed. To deal with these, `etalonnage` package contains a function `extend_series` that drop those values and extend one (or more) series based on the ARIMA(p,d,q) model that best fits the series.
 
 ### Validation scheme
 
 When data are not i.i.d., the validation scheme has to take into consideration the time dependent structure of the data to avoid the creation of non-independent training and test sets. To assess a model
 performances, `etalonnage` package implements "rolling-origin-update evaluation" (ROUE), meaning that the forecast origin rolls ahead in time. At each step, ROUE increments the traning set by one observation of the test set. Here, ROUE is implemented in such a way that the size of the training set increases at each iteration (expanding window) rather than remaining constant (fixed window). In doing so, all the available information is used but equal importance is given to all observations of the training set, regardless of their "distance" to the forecast origin. At the end of the validation, a set of forecasts is available, making it possible to compare models.
 
-### Example
+### Models
 
-Let's illustrate the whole process with a example. Suppose we want to forecast French growth at 2018Q4 (which is released by the INSEE 30 days after the end of the quarter) standing at December 2018. Suppose that the first date to forecast is 2015Q1 and that two type of models must be evaluated: one based on a random forest, another one based on XGBoost.
-
-At December 2018, all values in `fr_x` are observed except Banque de France surveys in December, household consumption in December and IPI in November and December. Thus, the columns containing these values must be truncated and extended with an ARIMA model each time a forecast is performed:
-
-```{r}
-bdf_3_cols <- names(fr_x)[stringr::str_detect(names(fr_x), "Bdf_3")]
-conso3_cols <- names(fr_x)[stringr::str_detect(names(fr_x), "conso_3")]
-ipi2_3_cols <- names(fr_x)[stringr::str_detect(names(fr_x), "ipi_[2-3]")]
-extend_cols <- c(bdf_3_cols, conso3_cols, ipi2_3_cols)
-n_extend <- c(rep(1, 8), rep(2, 4))
-list_cols <- list(extend_cols, n_extend)
-# forecast 1 quarter ahead for BdF and consumption series (i.e. for 8 series)
-# and 2 quarters ahed for IPI series (i.e. for 4 series)
-```
-
-Fit the models:
+All that remains is to choose a forecast origin and fit the models:
 
 ```{r, message=FALSE, results="hide"}
 rf <- etalonnage(
@@ -133,10 +117,9 @@ rf <- etalonnage(
     X = fr_x,
     y = fr_y$target,
     regressor = "randomForest",
-    cols = list_cols,
     forecast_origin = "2014-10-01",
     scale = "none",
-    mtry = 55,
+    mtry = 15,
     ntree = 500,
     nodesize = 3,
     importance = TRUE
@@ -147,7 +130,6 @@ xgb <- etalonnage(
     X = fr_x,
     y = fr_y$target,
     regressor = "xgboost",
-    cols = list_cols,
     forecast_origin = "2014-10-01",
     scale = "none",
     nrounds = 1500,
@@ -162,10 +144,9 @@ For each of the two models, this is what is done by `etalonnage`:
 1. Drop column `date` from the regressors,
 2. Keep all data until `forecast_origin`,
 3. If `scale != "none"`, process the data,
-4. Extend series in `cols`,
-5. Fit a model of type `regressor` on the data,
-6. Predict a value for the growth rate at `forecast_origin` + 1 quarter,
-7. Repeat steps from step 2 to step 6 until the last raw in `fr_x` is reached.
+4. Fit a model of type `regressor` on the data,
+5. Predict a value for the growth rate at `forecast_origin` + 1 quarter,
+6. Repeat steps from step 2 to step 5 until the last raw in `fr_x` is reached.
 
 Other arguments like `mtry` or `eta` come directly from the packages used to fit the models, i.e.:
  
@@ -173,10 +154,10 @@ Other arguments like `mtry` or `eta` come directly from the packages used to fit
 2. [xgboost](https://cran.r-project.org/web/packages/xgboost/xgboost.pdf) for `regressor = "xgboost"`,
 3. [glmnet](https://cran.r-project.org/web/packages/glmnet/glmnet.pdf) for `regressor = "glmnet"`.
 
-Plot a model predictions using the method `graph`:
+Plot a model predictions using `graph` method:
 
 ```{r fig.height = 4, fig.width = 7, fig.align = "center", message=FALSE}
-graph(xgb, annotation_y = -0.01, annotation_x = 200)
+graph(rf, annotation_y = -0.01, annotation_x = 200)
 ```
 
 Directly access to the predicted values using `rf$predicted_values` or valuate the models using their attributes:
