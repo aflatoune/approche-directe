@@ -19,13 +19,13 @@ The package has been tested with R 3.6 and R >= 4.0.5.
 
 ```r
 # install.packages("devtools")
-devtools::install_github("aflatoune/etalonnage")
+devtools::install_github("aflatoune/approche-directe")
 ```
 
 # Usage
 
-For a detailed presentation of the package, see the associated vignette.
+For a detailed presentation of the package, see the associated vignette (to use the following command, you have to specify `build_vignettes = TRUE` when installing the package)
 
 ```r
-utils::vignette("etalonnage")
+utils::vignette("approche-directe")
 ```
