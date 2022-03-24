@@ -14,7 +14,7 @@
 #' @export
 build_target <-
     function(y,
-             growth_rate,
+             growth_rate = FALSE,
              date_freq = c("month", "quarter"),
              start = NULL,
              end = NULL) {
