@@ -129,8 +129,8 @@ etalonnage <-
             }
             if (identical(i, 1L)) {
                 first_fit <- fit
-                in_sample_rmse <- sqrt(mean((fitted_values - y_train) ^2))
-                in_sample_mae <- mean(abs((fitted_values - y_train) ^2))
+                in_sample_rmse <- sqrt(mean((fitted_values - y_train) ^ 2))
+                in_sample_mae <- mean(abs((fitted_values - y_train)))
                 in_sample_mda <- mda(y_train, fitted_values)
             }
 
