@@ -14,12 +14,13 @@
 #' This ensures to consider only those values of the series that would have
 #' been available on the date on which the forecasts were calculated.
 #'
-#' @param name A character indicating a name for the analysis.
 #' @param X A tibble/df containing the regressors at a quarterly frequency.
 #' Must contain a date column.
 #' @param y A vector containing the target variable.
 #' @param forecast_origin A character indicating the first forecast origin, it
 #' must be of the form `"YYYY-MM-01"`.
+#' @param name A character indicating a name for the analysis - if missing
+#' defaults to `NULL`.
 #' @param regressor A character. For now, only `"randomForest"`, `"xgboost"`
 #' `"glmnet"` and `"lm"` are accepted.
 #' @param extend A list of 2 elements. The 1st one contains a vector of
@@ -39,10 +40,10 @@
 #' @return An object from S3 class `etalonnage`.
 #' @export
 etalonnage <-
-    function(name,
-             X,
+    function(X,
              y,
              forecast_origin,
+             name = NULL,
              regressor = c("randomForest", "xgboost", "glmnet", "lm"),
              extend = NULL,
              extend_mode = c("ARIMA", "constant"),
