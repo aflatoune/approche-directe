@@ -128,26 +128,36 @@ etalonnage <-
             } else if (identical(i, 1L) & !identical(regressor, "lm")) {
                 fitted_values <- c(fitted_values, predict(fit, X_train,))
             }
+            if (identical(i, 1L)) {
+                first_fit <- fit
+                in_sample_rmse <- sqrt(mean((fitted_values - y_train) ^ 2))
+                in_sample_mae <- mean(abs((fitted_values - y_train)))
+                in_sample_mda <- mda(y_train, fitted_values)
+            }
 
             try(utils::setTxtProgressBar(pb, i), silent = TRUE)
         }
 
         n_test <- length(predicted_values)
-        test_rmse <-
+        oot_rmse <-
             sqrt(mean((predicted_values[-n_test] - y[-train_index[[1]]]) ^ 2))
-        test_mae <- mean(abs(predicted_values[-n_test] - y[-train_index[[1]]]))
-        test_mda <- mda(y[-train_index[[1]]], predicted_values[-n_test])
+        oot_mae <- mean(abs(predicted_values[-n_test] - y[-train_index[[1]]]))
+        oot_mda <- mda(y[-train_index[[1]]], predicted_values[-n_test])
         out <- list(
             name = name,
             first_date = first_date,
             forecast_origin = forecast_origin,
             target = y,
+            first_fit = first_fit,
             last_fit = fit,
             fitted_values = fitted_values,
             predicted_values = predicted_values,
-            test_rmse = test_rmse,
-            test_mae = test_mae,
-            test_mda = test_mda,
+            in_sample_rmse = in_sample_rmse,
+            in_sample_mae = in_sample_mae,
+            in_sample_mda = in_sample_mda,
+            oot_rmse = oot_rmse,
+            oot_mae = oot_mae,
+            oot_mda = oot_mda,
             call = call
         )
         structure(out, class = "etalonnage")
