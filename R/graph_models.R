@@ -51,9 +51,13 @@ graph_models <- function(...,
         purrr::reduce(dplyr::full_join, by = "date") %>%
         tidyr::pivot_longer(-date,
                             names_to = "model",
-                            values_to = "value") %>%
-        dplyr::filter(date >= start_graph)
+                            values_to = "value")
 
+    if (!is.null(start_graph)) {
+        data <- data %>%
+            dplyr::filter(date >= start_graph)
+    }                        
+        
     if (is.null(title)) {
         title <-
             paste0("Prévision du taux de croissance")
