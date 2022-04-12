@@ -87,7 +87,7 @@ graph.etalonnage <-
                 title = title,
                 x = "",
                 y = "",
-                caption = paste("Source : DG Trésor.", "Dernier point :", upper)
+                caption = paste("Dernier point :", upper)
             ) +
             theme(
                 legend.position = "bottom",
