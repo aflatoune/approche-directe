@@ -52,7 +52,8 @@ etalonnage <-
              seed = 313,
              ...) {
         if (!("date" %in% names(X)) | !("Date" %in% sapply(X, class))) {
-            stop("X must contain a column \"date\" containing Date objects.")
+            stop("X must contain a column \"date\" containing Date objects.", 
+                 call. = FALSE)
         }
         regressor <- match.arg(regressor)
         extend_mode <- match.arg(extend_mode)
