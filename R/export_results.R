@@ -46,13 +46,13 @@ export_results.etalonnage <-
 
         if (!is.null(x$name)) {
             path_coef <- paste0("coef_", x$name)
-            path_metrics <- paste0("metrics", x$name)
+            path_metrics <- paste0("metrics_", x$name)
             coef <- readr::write_excel_csv2(tidy_coef, file = path_coef)
             metrics <- readr::write_excel_csv2(metrics, file = path_metrics)
         } else {
             name <- deparse(substitute(x))
             path_coef <- paste0("coef_", name)
-            path_metrics <- paste0("metrics", name)
+            path_metrics <- paste0("metrics_", name)
             coef <- readr::write_excel_csv2(tidy_coef, file = path_coef)
             metrics <- readr::write_excel_csv2(metrics, file = path_metrics)
         }
