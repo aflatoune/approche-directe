@@ -18,5 +18,5 @@ computed.}
 
 }
 \description{
-Should be used on quarterly data returned by \code{month_to_quarter} function.
+Must be used on quarterly data returned by \code{month_to_quarter} function.
 }

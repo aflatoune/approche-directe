@@ -5,13 +5,13 @@
 \title{etalonnage}
 \usage{
 etalonnage(
-  name,
   X,
   y,
   forecast_origin,
+  name = NULL,
   regressor = c("randomForest", "xgboost", "glmnet", "lm"),
   extend = NULL,
-  extend_mode = "constant",
+  extend_mode = c("ARIMA", "constant"),
   scale = c("none", "center", "scale"),
   frequency = "quarter",
   seed = 313,
@@ -19,8 +19,6 @@ etalonnage(
 )
 }
 \arguments{
-\item{name}{A character indicating a name for the analysis.}
-
 \item{X}{A tibble/df containing the regressors at a quarterly frequency.
 Must contain a date column.}
 
@@ -29,18 +27,20 @@ Must contain a date column.}
 \item{forecast_origin}{A character indicating the first forecast origin, it
 must be of the form \code{"YYYY-MM-01"}.}
 
+\item{name}{A character indicating a name for the analysis - if missing
+defaults to \code{NULL}.}
+
 \item{regressor}{A character. For now, only \code{"randomForest"}, \code{"xgboost"}
 \code{"glmnet"} and \code{"lm"} are accepted.}
 
 \item{extend}{A list of 2 elements. The 1st one contains a vector of
 characters indicating columns to extend when fitting models, the 2nd one
 contains a vector indicating the number of samples to remove and predict for
-each column. Series are extended with an ARIMA(p,d,q) model - if missing
-defaults to \code{NULL}.}
+each column - if missing defaults to \code{NULL}.}
 
 \item{extend_mode}{Indicates whether to extend columns in \code{extend_cols[[1]]}
 using an ARMA(p,d,q) model or by replacing missing values with the last
-observed value - if missing defaults to \code{"constant"}.}
+observed value. Must be one of  \code{"ARIMA"} or \code{"constant"}.}
 
 \item{scale}{Indicates  whether to leave unchanged, center or scale \code{X}.
 Must be one of \verb{"none}, \code{"center"} or \code{"scale"}.}

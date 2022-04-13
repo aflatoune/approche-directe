@@ -4,7 +4,7 @@
 \alias{load_data}
 \title{Load data}
 \usage{
-load_data(path, date = TRUE, start = NULL, frequency = NULL, sheet = NULL)
+load_data(path, date = TRUE, first_date = NULL, frequency = NULL, sheet = NULL)
 }
 \arguments{
 \item{path}{A path to the xlsx file containing all the data.}
@@ -15,7 +15,7 @@ a date column. The date must be of the form \code{"YYYY-MM-01"}
 \item if missing defaults to \code{TRUE}.
 }}
 
-\item{start}{A character indicating the date of observation of the first
+\item{first_date}{A character indicating the date of observation of the first
 sample when \code{date} is \code{FALSE}, must be of the form \code{"YYYY-MM-01"}
 \itemize{
 \item if missing defaults to \code{NULL}.

@@ -6,7 +6,7 @@
 \usage{
 build_target(
   y,
-  growth_rate,
+  growth_rate = FALSE,
   date_freq = c("month", "quarter"),
   start = NULL,
   end = NULL
