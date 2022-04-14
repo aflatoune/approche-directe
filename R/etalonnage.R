@@ -140,10 +140,10 @@ etalonnage <-
         }
 
         n_test <- length(predicted_values)
-        oot_rmse <-
+        oos_rmse <-
             sqrt(mean((predicted_values[-n_test] - y[-train_index[[1]]]) ^ 2))
-        oot_mae <- mean(abs(predicted_values[-n_test] - y[-train_index[[1]]]))
-        oot_mda <- mda(y[-train_index[[1]]], predicted_values[-n_test])
+        oos_mae <- mean(abs(predicted_values[-n_test] - y[-train_index[[1]]]))
+        oos_mda <- mda(y[-train_index[[1]]], predicted_values[-n_test])
         out <- list(
             name = name,
             first_date = first_date,
@@ -156,9 +156,9 @@ etalonnage <-
             in_sample_rmse = in_sample_rmse,
             in_sample_mae = in_sample_mae,
             in_sample_mda = in_sample_mda,
-            oot_rmse = oot_rmse,
-            oot_mae = oot_mae,
-            oot_mda = oot_mda,
+            oos_rmse = oos_rmse,
+            oos_mae = oos_mae,
+            oos_mda = oos_mda,
             call = call
         )
         structure(out, class = "etalonnage")

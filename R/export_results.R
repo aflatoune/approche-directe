@@ -39,9 +39,9 @@ export_results.etalonnage <-
             in_sample_rmse = x$in_sample_rmse,
             in_sample_mae = x$in_sample_mae,
             in_sample_mda = x$in_sample_mda,
-            oot_rmse = x$oot_rmse,
-            oot_mae = x$oot_mae,
-            oot_mda = x$oot_mda
+            oos_rmse = x$oos_rmse,
+            oos_mae = x$oos_mae,
+            oos_mda = x$oos_mda
         )
 
         if (!is.null(x$name)) {
