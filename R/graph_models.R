@@ -24,6 +24,9 @@ prepare_comp <- function(x) {
 #' the form `"YYYY-MM-01"` - if missing defaults to `NULL`.
 #' @param title A character indicating a title for the plot - if missing
 #' defaults to `NULL`.
+#' @param save A boolean - if missing defaults to `FALSE`.
+#' @param filename A character, file name to create on disk - if missing
+#' defaults to `NULL`.
 #' @param legend_text_size A numeric - if missing defaults to 12.
 #' @param axis_text_size A numeric - if missing defaults to 11.
 #' @param annotation_size A numeric - if missing defaults to 5.5.
@@ -39,6 +42,8 @@ prepare_comp <- function(x) {
 graph_models <- function(...,
                     start_graph = NULL,
                     title = NULL,
+                    save = FALSE,
+                    filename = NULL,
                     legend_text_size = 12,
                     axis_text_size = 11,
                     annotation_size = 5.5,
@@ -108,5 +113,23 @@ graph_models <- function(...,
             expand = c(0, 0)
         ) +
         scale_y_continuous(labels = scales::percent)
+
+        if (save & is.null(filename)) {
+            filename <- "graph_models.png"
+            ggsave(
+                graph,
+                filename = file.path('output', filename),
+                width = fig_width,
+                height = fig_height
+            ) 
+        } else if (save & !is.null(filename)) {
+            ggsave(
+                graph,
+                filename = file.path('output', filename),
+                width = fig_width,
+                height = fig_height
+            )
+        }
+
     return(g)
 }
