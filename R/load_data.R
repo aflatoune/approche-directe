@@ -1,5 +1,7 @@
 #' Load data
 #'
+#' Load data from an xlsx file.
+#'
 #' @param path A path to the xlsx file containing all the data.
 #' @param date A logical indicating whether the first column of the file is
 #' a date column. The date must be of the form `"YYYY-MM-01"`
@@ -22,8 +24,16 @@ load_data <-
              frequency = NULL,
              sheet = NULL) {
 
-        if (is.null(first_date) & isFALSE(date)) {
+        if (isFALSE(date) & is.null(first_date)) {
             stop("One of (\"date\", \"first_date\") must be set.", call. = FALSE)
+        }
+        if (isTRUE(date) & !is.null(first_date)) {
+            warning("The argument \"first_date\" has been ignored as ",
+            "\"date\" is not NULL", call. = FALSE)
+        }
+        if (isTRUE(date) & !is.null(frequency)) {
+            warning("The argument \"frequency\" has been ignored as ",
+            "\"date\" is not NULL", call. = FALSE)
         }
         if (!is.null(first_date) & is.null(frequency)) {
             stop("You must set \"frequency\" when \"first_date\" is not null.",
@@ -32,7 +42,7 @@ load_data <-
         if (!is.null(frequency)) {
             frequency <- match.arg(frequency, c("month", "quarter"))
         }
-        if (is.null(sheet)) {
+        if (!is.null(sheet)) {
             dataset <- readxl::read_xlsx(path = path, sheet = sheet)
         } else {
             dataset <- readxl::read_xlsx(path = path)
