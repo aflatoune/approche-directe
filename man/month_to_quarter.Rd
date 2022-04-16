@@ -2,7 +2,7 @@
 % Please edit documentation in R/month_to_quarter.R
 \name{month_to_quarter}
 \alias{month_to_quarter}
-\title{Build monthly dataset from quarterly dataset}
+\title{Build quarterly dataset from monthly dataset}
 \usage{
 month_to_quarter(X, start = NULL, end = NULL)
 }
@@ -20,5 +20,5 @@ A wider tibble/df with quarterly data. The new df contains one
 column for each month value (e.g. X_month1, X_month2, X_month3).
 }
 \description{
-Build monthly dataset from quarterly dataset
+Build quarterly dataset from monthly dataset
 }

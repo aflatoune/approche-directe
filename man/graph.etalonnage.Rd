@@ -8,6 +8,8 @@
   x,
   start_graph = x$first_date,
   title = NULL,
+  save = FALSE,
+  filename = NULL,
   legend_text_size = 12,
   axis_text_size = 11,
   annotation_size = 5.5,
@@ -25,6 +27,11 @@
 the form \code{"YYYY-MM-01"} - if missing defaults to \code{x$first_date}.}
 
 \item{title}{A character indicating a title for the plot - if missing
+defaults to \code{NULL}.}
+
+\item{save}{A boolean - if missing defaults to \code{FALSE}.}
+
+\item{filename}{A character, file name to create on disk - if missing
 defaults to \code{NULL}.}
 
 \item{legend_text_size}{A numeric - if missing defaults to 12.}

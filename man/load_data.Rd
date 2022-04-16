@@ -31,5 +31,5 @@ to \code{NULL}.}
 A df/tibble with a date column and loaded data
 }
 \description{
-Load data
+Load data from an xlsx file.
 }
