@@ -36,7 +36,9 @@ Imports:
     utils,
     purrr,
     ggplot2,
-    magrittr
+    magrittr,
+    broom,
+    readr
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)

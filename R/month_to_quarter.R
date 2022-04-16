@@ -1,4 +1,4 @@
-#' Build monthly dataset from quarterly dataset
+#' Build quarterly dataset from monthly dataset
 #'
 #' @param X A tibble/df with a `"date"` column at monthly frequency.
 #' @param start A character indicating the first date to keep, it must be of
