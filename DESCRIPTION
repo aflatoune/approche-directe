@@ -1,13 +1,10 @@
 Package: etalonnage
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Simplify Macroeconomic Forecasting
+Version: 0.0.1
 Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person(given = "Aflatoune",
+           role = c("aut", "cre"))
+Description: Provides functions to perform to perform common manipulations in macroeconomic forecasting (add differentiated predictors, perform rolling origin forecasts etc.). 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -21,24 +18,24 @@ Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Imports: 
-    lubridate,
-    dplyr,
-    readxl,
+    lubridate (>= 1.7.10),
+    dplyr (>= 1.0.7),
+    readxl (>= 1.3.1),
     stats,
-    rlang,
-    caret,
-    forecast,
-    randomForest,
-    glmnet,
-    xgboost,
-    tidyr,
-    scales,
+    rlang (>= 1.0.1),
+    caret (>= 6.0-88),
+    forecast (>= 8.16),
+    randomForest (>= 4.6-14),
+    glmnet (>= 4.1-2),
+    xgboost (>= 1.4.1.1),
+    tidyr (>= 1.1.3),
+    scales (>= 1.1.1),
     utils,
-    purrr,
-    ggplot2,
-    magrittr,
-    broom,
-    readr
+    purrr (>= 0.3.4),
+    ggplot2 (>= 3.3.5),
+    magrittr (>= 2.0.1),
+    broom (>= 0.7.12),
+    readr (>= 1.4.0)
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)
