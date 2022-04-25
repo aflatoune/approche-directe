@@ -20,7 +20,7 @@ acquis <- function(X,
         m1 <- paste0(col, "_1")
         m2 <- paste0(col, "_2")
         m3 <- paste0(col, "_3")
-        col_name <- glue::glue("acquis_{col}_m{month}")
+        col_name <- paste0("acquis_", col, "_m", month)
         X[[col_name]] <- NA
 
         if (identical(month, 0)) {

@@ -4,7 +4,7 @@
 #' @param exclude A vector of columns names indicating columns to ignore when
 #' computing the fd. Names can be passed directly as if they were variables in
 #' the environment - if missing defaults to `NULL`.
-#' @param scale A character indicating whether to scale data or only center.
+#' @param mode A character indicating whether to scale data or only center.
 #' Must be one of "center" or "scale".
 #'
 #' @return A df/tibble with standardized columns
