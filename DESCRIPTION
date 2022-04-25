@@ -2,7 +2,7 @@ Package: etalonnage
 Title: Simplify Macroeconomic Forecasting
 Version: 0.0.1
 Authors@R: 
-    person("Aflatoune", "Last", "first.last@example.com", role = c("aut", "cre"))
+    person("Aflatoune", "Last", , email = "first.last@example.com", role = c("aut", "cre"))
 Description: Provides functions to perform to perform common manipulations in macroeconomic forecasting (add differentiated predictors, perform rolling origin forecasts etc.). 
 License: MIT + file LICENSE
 Encoding: UTF-8
