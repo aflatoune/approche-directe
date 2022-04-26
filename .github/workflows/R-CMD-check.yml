@@ -12,7 +12,9 @@ jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
     name: check-on-${{ matrix.config.os }} (${{ matrix.config.r }})
+
     strategy:
+      fail-fast: false
       matrix:
         config:
           - {os: windows-latest, r: 'release'}
@@ -25,7 +27,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up R ${{ matrix.r-version }}
-        uses: r-lib/actions/setup-r@v1
+        uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.r-version }}
 
