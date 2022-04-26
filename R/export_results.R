@@ -33,7 +33,7 @@ export_results.etalonnage <-
         }
 
         tidy_coef <- broom::tidy(summary(x$first_fit))
-        adj_rsquared <- summary(lm_insee$first_fit)$adj.r.squared
+        adj_rsquared <- summary(x$first_fit)$adj.r.squared
         metrics <- data.frame(
             adj_rsquared = adj_rsquared,
             in_sample_rmse = x$in_sample_rmse,
