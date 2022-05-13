@@ -61,11 +61,11 @@ graph_models <- function(...,
     if (!is.null(start_graph)) {
         data <- data %>%
             dplyr::filter(date >= start_graph)
-    }                        
-        
+    }
+
     if (is.null(title)) {
         title <-
-            paste0("Prévision du taux de croissance")
+            paste0("Prevision du taux de croissance")
     }
 
     upper <- max(data$date)
@@ -121,7 +121,7 @@ graph_models <- function(...,
                 filename = file.path('output', filename),
                 width = fig_width,
                 height = fig_height
-            ) 
+            )
         } else if (save & !is.null(filename)) {
             ggsave(
                 graph,
