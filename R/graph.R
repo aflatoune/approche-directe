@@ -59,7 +59,7 @@ graph.etalonnage <-
         if (is.null(title)) {
             name <- x$name
             title <-
-                paste0("Prévision du taux de croissance (", name, ")")
+                paste0("Prevision du taux de croissance (", name, ")")
         }
 
         actual <- x$target
