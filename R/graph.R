@@ -59,7 +59,7 @@ graph.etalonnage <-
         if (is.null(title)) {
             name <- x$name
             title <-
-                paste0("Prévision du taux de croissance (", name, ")")
+                paste0("Prevision du taux de croissance (", name, ")")
         }
 
         actual <- x$target
@@ -84,7 +84,7 @@ graph.etalonnage <-
             aes(x = date, y = value, colour = type) +
             geom_line(size = 1) +
             scale_color_manual(
-                labels = c("Croissance observée", "Croissance prévue"),
+                labels = c("Observe", "Prevu"),
                 values = c("darkblue", "darkorange")
             ) +
             theme_minimal() +
@@ -142,7 +142,7 @@ graph.etalonnage <-
                     "text",
                     x = x$forecast_origin - annotation_x,
                     y = annotation_y,
-                    label = "Prévision",
+                    label = "Prevision",
                     angle = 90,
                     col = "gray30",
                     size = annotation_size
@@ -156,7 +156,7 @@ graph.etalonnage <-
                 filename = file.path('output', filename),
                 width = fig_width,
                 height = fig_height
-            ) 
+            )
         } else if (save & !is.null(filename)) {
             ggsave(
                 graph,
